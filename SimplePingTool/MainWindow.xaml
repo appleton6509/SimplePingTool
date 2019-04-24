@@ -1,0 +1,72 @@
+﻿<Window x:Class="SimplePingTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimplePingTool"
+        mc:Ignorable="d"
+        Title="Simple Ping Tool" Height="415" Width="636">
+    <Border Padding="5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="130"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="Controls" HorizontalAlignment="Left" Height="121" Margin="0,0,0,0" Padding="5" VerticalAlignment="Top" Width="416" FontWeight="Bold">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="79*"/>
+                        <ColumnDefinition Width="224*"/>
+                        <ColumnDefinition Width="90*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="btnStartPing" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Click="BtnStartPing_Click" Width="75" Height="25" />
+                    <Button x:Name="btnStopPing" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Stop" Click="BtnStopPing_Click" Width="75" Height="25" IsEnabled="False" />
+                    <TextBox x:Name="tbAddressOrIp" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"  Text="Enter an IP or Domain" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" GotFocus="TbAddressOrIp_GotFocus" TextChanged="TbAddressOrIp_TextChanged"  Padding="5,0,0,0" FontWeight="Normal"/>
+                    <ComboBox x:Name="cbAddressOrIp" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" DropDownClosed="CbAddressOrIp_DropDownClosed" FontSize="14" Padding="7,0,0,0" Width="204" Height="24" FontWeight="Normal"/>
+                    <TextBox x:Name="tbLogFilePath" Grid.Row="2" Grid.Column="1" Text="" Height="25" VerticalAlignment="Center" HorizontalAlignment="Center" Width="204" Padding="5,0,0,0" VerticalContentAlignment="Center" FontSize="14" FontWeight="Normal"  />
+                    <Label Content="Log Path:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <CheckBox x:Name="chbEnableLogging" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,8.6,0,6"/>
+
+                </Grid>
+            </GroupBox>
+            <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="None" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Descending"/>
+                    <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Descending"/>
+                    <DataGridTextColumn Binding="{Binding Status}" IsReadOnly="True" Header="Result" Width="*" SortDirection="Descending"/>
+                    <DataGridTextColumn Binding="{Binding TimeStamp}" IsReadOnly="True" Header="Timestamp" Width="*" SortDirection="Descending"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <GroupBox Header="Ping Stats" HorizontalAlignment="Left" Height="121" Margin="431,0,0,0" VerticalAlignment="Top" Width="188" FontWeight="Bold">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Max. Latency:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
+                    <Label Content="Packets Sent:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
+                    <Label Content="Packets Lost:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
+                    <Label Content="Avg. Latency:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
+                    <Label x:Name="lbAverageLatency" Content="N/A" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontWeight="Normal" />
+                    <Label x:Name="lbPacketsSent" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" FontWeight="Normal"/>
+                    <Label x:Name="lbPacketsLost" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" FontWeight="Normal"/>
+                    <Label x:Name="lbMaxLatency" Content="N/A"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" FontWeight="Normal"/>
+                </Grid>
+            </GroupBox>
+
+
+
+        </Grid>
+    </Border>
+</Window>
