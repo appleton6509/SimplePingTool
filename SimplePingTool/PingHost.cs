@@ -9,8 +9,8 @@ namespace SimplePingTool
     public class PingHost
     {
         //interval is based on milliseconds
-        private int IntervalBetweenPings { get; set; }
-        private string AddressOrIp { get; set; }
+        public int IntervalBetweenPings { get; set; }
+        public string AddressOrIp { get; set; }
         public bool IsPingRunning { get; set; }
 
         //potential ping statuses

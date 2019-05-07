@@ -72,8 +72,6 @@ namespace SimplePingTool
         //update UI before ping is started
         private void BeforePingRoutine()
         {
-            //Tell UI Ping is running
-            //IsPingRunning = true;
 
             //Enable stop ping btn
             btnStopPing.IsEnabled = true;
@@ -150,6 +148,7 @@ namespace SimplePingTool
             //Begin ping
             else
             {
+                
                 //Pre-Ping UI/Var routine
                 BeforePingRoutine();
 
@@ -161,6 +160,9 @@ namespace SimplePingTool
                     {
                         break;
                     }
+                    //check for interval changes
+                    pingHost.IntervalBetweenPings = (int)slInterval.Value * 1000;
+                    
                     //ping address
                     PingResult pingResult = await pingHost.StartPingAsync();
 

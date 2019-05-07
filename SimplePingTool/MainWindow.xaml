@@ -13,16 +13,16 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Header="Controls" HorizontalAlignment="Left" Height="121" Margin="0,0,0,0" Padding="5" VerticalAlignment="Top" Width="416" FontWeight="Bold">
-                <Grid>
+                <Grid Margin="0,0,-0.4,-6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="94*"/>
                         <ColumnDefinition Width="204*"/>
                         <ColumnDefinition Width="94*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30*"/>
-                        <RowDefinition Height="29*"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="15*"/>
+                        <RowDefinition Height="14*"/>
+                        <RowDefinition Height="15*"/>
                     </Grid.RowDefinitions>
                     <Button x:Name="btnStartPing" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Click="BtnStartPing_Click" Width="75" Height="25" Margin="10,2,9.4,2.6" />
                     <Button x:Name="btnStopPing" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Stop" Click="BtnStopPing_Click" Width="75" Height="24" IsEnabled="False" Margin="10,2.4,9.4,2.4" />
@@ -37,13 +37,13 @@
                     <Label Content="Enable Logs" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="10" Height="25" Margin="0,3.6,196.2,1" Width="82" Grid.ColumnSpan="2">
                         <Label.ToolTip>
                             <ToolTip>
-                                Logs are stored in same directory as this application. 
+                                Logs are stored in same directory as this application.
                             </ToolTip>
                         </Label.ToolTip>
                     </Label>
-                    
-                    <CheckBox x:Name="chbEnableLogging" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
 
+                    <CheckBox x:Name="chbEnableLogging" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
+                    <Slider x:Name="slInterval" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5" Value="1" Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds."/>
                 </Grid>
             </GroupBox>
             <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="None" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
@@ -76,13 +76,14 @@
                             </ToolTip>
                         </Label.ToolTip>
                     </Label>
-                    
+
                     <Label x:Name="lbAverageLatency" Content="N/A" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontWeight="Normal" />
                     <Label x:Name="lbPacketsSent" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" FontWeight="Normal"/>
                     <Label x:Name="lbPacketsLost" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" FontWeight="Normal"/>
                     <Label x:Name="lbMaxLatency" Content="N/A"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" FontWeight="Normal"/>
                 </Grid>
             </GroupBox>
+
         </Grid>
     </Border>
 </Window>
