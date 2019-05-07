@@ -2,6 +2,8 @@
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
+
+//just making some notes
 namespace SimplePingTool
 {
     public class PingHost
