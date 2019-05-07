@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace SimplePingTool
 {
@@ -22,14 +14,11 @@ namespace SimplePingTool
     {
         private string AddressOrIp { get; set; }
         private int PingInterval { get; set; }
-        private bool IsPingRunning { get; set; }
-        private string LogPath { get; set; }
-        
+        private PingHost pingHost;
+        public Log logging;
 
-        List<int> latencyData = new List<int>();
-        List<string> pingStatusData = new List<string>();
-
-        List<string> addressOrIpList = new List<string>()
+        public List<PingResult> results = new List<PingResult>();
+        public List<string> addressOrIpList = new List<string>()
         {
             "8.8.8.8",
             "8.8.4.4",
@@ -39,10 +28,10 @@ namespace SimplePingTool
 
         enum LabelText
         {
-            Start,
-            Started,
+            START,
+            STARTED,
             NA,
-            Success,
+            SUCCESS,
         }
 
         public MainWindow()
@@ -53,6 +42,7 @@ namespace SimplePingTool
         //Set default values and 
         private void SetDefaults()
         {
+   
             //Populate combo box items
             cbAddressOrIp.ItemsSource = addressOrIpList;
 
@@ -62,73 +52,65 @@ namespace SimplePingTool
             lbPacketsSent.Content = LabelText.NA;
             lbMaxLatency.Content = LabelText.NA;
 
-            //Sets a default Log Path
-            LogPath = "C:/PingResult/Log.txt";
-            tbLogFilePath.Text = LogPath;
+            //instantiate var for logging
+            logging = new Log();
         }
 
+        private void ResetUIandData()
+        {
+            //clear data
+            dgPingResults.Items.Clear();
+            results.Clear();
+
+            //Clear "Ping Stat" labels
+            lbAverageLatency.Content = LabelText.NA;
+            lbPacketsLost.Content = LabelText.NA;
+            lbPacketsSent.Content = LabelText.NA;
+            lbMaxLatency.Content = LabelText.NA;
+
+        }
         //update UI before ping is started
         private void BeforePingRoutine()
         {
             //Tell UI Ping is running
-            IsPingRunning = true;
-
-            //clear datagrid before starting
-            dgPingResults.Items.Clear();
+            //IsPingRunning = true;
 
             //Enable stop ping btn
             btnStopPing.IsEnabled = true;
 
             //update text on start button text and disable it
-            btnStartPing.Content = LabelText.Started;
+            btnStartPing.Content = LabelText.STARTED;
             btnStartPing.IsEnabled = false;
 
             //disable textbox and combobox when running
             tbAddressOrIp.IsEnabled = false;
             cbAddressOrIp.IsEnabled = false;
 
-            //Clear "Ping Stat" vars and labels
-            latencyData.Clear();
-            pingStatusData.Clear();
-            lbAverageLatency.Content = LabelText.NA;
-            lbPacketsLost.Content = LabelText.NA;
-            lbPacketsSent.Content = LabelText.NA;
-            lbMaxLatency.Content = LabelText.NA;
+            //Resets UI labels and grids/ reset vars.
+            ResetUIandData();
         }
 
-        //Update Ping Stat labels
-        private void UpdatePingStats(PingResult pingResult) {
+        private void UpdatePingStats(PingResult pingResults)
+        {
 
-            //store latency 
-            //
-            //checks if latency was set to less than 1
-            if (pingResult.Latency.Contains("<1"))
+            results.Add(pingResults);
+
+            //Update UI for "Ping Stats"
+            lbAverageLatency.Content = Math.Round(results.Average(x => x.Latency));
+            lbPacketsSent.Content = results.Count;
+
+            //ignore errors in the event no packets succeed
+            try
             {
-                latencyData.Add(1);
-            } else
-            {
-                latencyData.Add(int.Parse(pingResult.Latency));
+                lbMaxLatency.Content = results
+                .Where(x => x.Status == LabelText.SUCCESS.ToString())
+                .Max(x => x.Latency);
             }
+            catch { }
+
+            lbPacketsLost.Content = results
+                .Count(x => x.Status != LabelText.SUCCESS.ToString()).ToString();
             
-            //Store status data
-            pingStatusData.Add(pingResult.Status);
-
-            //calculate "Ping Stats"
-            lbAverageLatency.Content = Math.Round(latencyData.Average());
-            lbPacketsSent.Content = latencyData.Count;
-            lbMaxLatency.Content = latencyData.Max();
-
-            //calculates total "failed" pings
-            int countFailedPings = 0;
-            foreach (string status in pingStatusData)
-            {
-                if (status != LabelText.Success.ToString())
-                {
-                    countFailedPings++;
-                }
-
-            }
-            lbPacketsLost.Content = countFailedPings;
         }
 
         //update UI after stop button pressed
@@ -139,7 +121,7 @@ namespace SimplePingTool
             cbAddressOrIp.IsEnabled = true;
 
             //update text on start button and enable it
-            btnStartPing.Content = LabelText.Start;
+            btnStartPing.Content = LabelText.START;
             btnStartPing.IsEnabled = true;
 
             //Disable stop button
@@ -149,7 +131,7 @@ namespace SimplePingTool
 
         private void BtnStopPing_Click(object sender, RoutedEventArgs e)
         {
-            IsPingRunning = false;
+            pingHost.IsPingRunning = false;
 
             //Post Ping UI/Var Routine
             AfterPingRoutine();
@@ -157,9 +139,10 @@ namespace SimplePingTool
 
         private async void BtnStartPing_Click(object sender, RoutedEventArgs e)
         {
+            AddressOrIp = tbAddressOrIp.Text;
 
             //check an address or ip has been entered
-            if (AddressOrIp == null)
+            if (AddressOrIp == null || AddressOrIp == "")
             {
                 MessageBox.Show("Address field cannot be empty.", "Error");
             }
@@ -170,27 +153,42 @@ namespace SimplePingTool
                 //Pre-Ping UI/Var routine
                 BeforePingRoutine();
 
+                pingHost = new PingHost(AddressOrIp);
+
                 do
                 {
+                    if (!pingHost.IsPingRunning)
+                    {
+                        break;
+                    }
                     //ping address
-                    PingHost pingHost = new PingHost(AddressOrIp, 1000);
                     PingResult pingResult = await pingHost.StartPingAsync();
 
                     //add results to datagrid
                     dgPingResults.Items.Insert(0, pingResult);
-                                       
+
                     //Update "Ping Stats" details
                     UpdatePingStats(pingResult);
 
-                } while (IsPingRunning);
+                    //log to file if selected
+                    if ((bool)chbEnableLogging.IsChecked)
+                    {
+                        logging.LogToTextFile(pingResult);
+                    }
+
+                } while (pingHost.IsPingRunning);
             }
+        }
+
+        private void TbAddressOrIp_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void CbAddressOrIp_DropDownClosed(object sender, EventArgs e)
         {
             //update addressOrIP var and text box when dropdown is closed.
             var addressSelection = (ComboBox)sender;
-            AddressOrIp = addressSelection.Text;
             tbAddressOrIp.Text = addressSelection.Text;
         }
 
@@ -206,6 +204,5 @@ namespace SimplePingTool
             var tbAddress = (TextBox)sender;
             AddressOrIp = tbAddress.Text;
         }
-
     }
 }
