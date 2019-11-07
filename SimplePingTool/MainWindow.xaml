@@ -41,10 +41,13 @@
                             </ToolTip>
                         </Label.ToolTip>
                     </Label>
-
                     <CheckBox x:Name="chbEnableLogging" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
-                    <Slider x:Name="slInterval" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5" Value="1" Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds."/>
-                </Grid>
+                    <Slider x:Name="slInterval" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5" Value="1" Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds." ValueChanged="slInterval_ValueChanged" />
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock x:Name="tbIntervalValue" FontWeight="Normal" HorizontalAlignment="Left" VerticalAlignment="Center">1</TextBlock>
+                        <TextBlock FontWeight="Normal">s interval</TextBlock>
+                    </StackPanel>
+          </Grid>
             </GroupBox>
             <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="None" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
                 <DataGrid.Columns>

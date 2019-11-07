@@ -13,7 +13,6 @@ namespace SimplePingTool
     public partial class MainWindow : Window
     {
         private string AddressOrIp { get; set; }
-        private int PingInterval { get; set; }
         private PingHost pingHost;
         public Log logging;
 
@@ -205,6 +204,17 @@ namespace SimplePingTool
         {
             var tbAddress = (TextBox)sender;
             AddressOrIp = tbAddress.Text;
+        }
+
+        private void slInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            
+            var sliderIntervalValue = (Slider)sender;
+
+            if (sliderIntervalValue.IsLoaded)
+            {
+                tbIntervalValue.Text = sliderIntervalValue.Value.ToString();
+            }
         }
     }
 }
