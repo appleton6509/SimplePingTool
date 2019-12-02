@@ -34,15 +34,21 @@ namespace SimplePingTool
             SUCCESS,
         }
 
+
+
+
         public MainWindow()
         {
             InitializeComponent();
             SetDefaults();
         }
+
+
+
         //Set default values and 
         private void SetDefaults()
         {
-   
+
             //Populate combo box items
             cbAddressOrIp.ItemsSource = addressOrIpList;
 
@@ -108,7 +114,7 @@ namespace SimplePingTool
 
             lbPacketsLost.Content = results
                 .Count(x => x.Status != LabelText.SUCCESS.ToString()).ToString();
-            
+
         }
 
         //update UI after stop button pressed
@@ -143,43 +149,40 @@ namespace SimplePingTool
             if (AddressOrIp == null || AddressOrIp == "")
             {
                 MessageBox.Show("Address field cannot be empty.", "Error");
+                return;
             }
 
-            //Begin ping
-            else
+
+            //Pre-Ping UI/Var routine
+            BeforePingRoutine();
+
+            pingHost = new PingHost(AddressOrIp);
+
+            do
             {
-                
-                //Pre-Ping UI/Var routine
-                BeforePingRoutine();
-
-                pingHost = new PingHost(AddressOrIp);
-
-                do
+                if (!pingHost.IsPingRunning)
                 {
-                    if (!pingHost.IsPingRunning)
-                    {
-                        break;
-                    }
-                    //check for interval changes
-                    pingHost.IntervalBetweenPings = (int)slInterval.Value * 1000;
-                    
-                    //ping address
-                    PingResult pingResult = await pingHost.StartPingAsync();
+                    break;
+                }
+                //check for interval changes
+                pingHost.IntervalBetweenPings = (int)slInterval.Value * 1000;
 
-                    //add results to datagrid
-                    dgPingResults.Items.Insert(0, pingResult);
+                //ping address
+                PingResult pingResult = await pingHost.StartPingAsync();
 
-                    //Update "Ping Stats" details
-                    UpdatePingStats(pingResult);
+                //add results to datagrid
+                dgPingResults.Items.Insert(0, pingResult);
 
-                    //log to file if selected
-                    if ((bool)chbEnableLogging.IsChecked)
-                    {
-                        logging.LogToTextFile(pingResult);
-                    }
+                //Update "Ping Stats" details
+                UpdatePingStats(pingResult);
 
-                } while (pingHost.IsPingRunning);
-            }
+                //log to file if selected
+                if ((bool)chbEnableLogging.IsChecked)
+                {
+                    logging.LogToTextFile(pingResult);
+                }
+
+            } while (pingHost.IsPingRunning);
         }
 
         private void TbAddressOrIp_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -209,7 +212,7 @@ namespace SimplePingTool
 
         private void slInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            
+
             var sliderIntervalValue = (Slider)sender;
 
             if (sliderIntervalValue.IsLoaded)

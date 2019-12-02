@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePingTool"
         mc:Ignorable="d"
-        Title="Simple Ping Tool" Height="415" Width="636">
+        Title="Simple Ping Tool" Height="415" MinHeight="415" MinWidth="645" Width="645">
     <Border Padding="5">
         <Grid>
             <Grid.RowDefinitions>
