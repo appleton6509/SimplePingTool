@@ -49,7 +49,7 @@
                     </StackPanel>
           </Grid>
             </GroupBox>
-            <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="None" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+            <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Descending"/>
                     <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Descending"/>
