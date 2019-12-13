@@ -68,7 +68,7 @@ namespace SimplePingTool
             return true;
         }
 
-        private void ClearDataFields()
+        private void ClearPingResultDataUI()
         {
             //clear data
             dgPingResults.Items.Clear();
@@ -85,11 +85,10 @@ namespace SimplePingTool
         private void PrePingUpdateControls()
         {
             //Enable stop ping btn
-            btnStopPing.Content = LabelText.STARTED;
             btnStopPing.IsEnabled = true;
 
             //update text on start button text and disable it
-            
+            btnStartPing.Content = LabelText.STARTED;
             btnStartPing.IsEnabled = false;
 
             //disable textbox and combobox when running
@@ -115,13 +114,15 @@ namespace SimplePingTool
 
         }
 
-        private void UpdatePingStats(PingResult pingResults)
+        private void UpdatePingStatsUI(PingResult pingResults)
         {
 
+            //add results to ping list for populating ping stats
             results.Add(pingResults);
 
             //Update UI for "Ping Stats"
-            lbAverageLatency.Content = Math.Round(results.Average(x => x.Latency));
+            double averageLatency = Math.Round(results.Average(x => x.Latency));
+            lbAverageLatency.Content = averageLatency;
             lbPacketsSent.Content = results.Count;
 
             //ignore errors in the event no packets succeed
@@ -131,30 +132,29 @@ namespace SimplePingTool
                 .Where(x => x.Status == LabelText.SUCCESS.ToString())
                 .Max(x => x.Latency);
             }
-            catch { }
+            catch { /*ignore*/ }
 
             lbPacketsLost.Content = results
                 .Count(x => x.Status != LabelText.SUCCESS.ToString()).ToString();
 
         }
 
-        private async Task BeginPingTask()
+        private async Task StartPingTask()
         {
             bool isLoggingEnabled = (bool)chbEnableLogging.IsChecked;
 
             //ping host and log results
             PingResult pingResult = await pingHost.StartPingAsync();
 
-            //add results to datagrid
-            dgPingResults.Items.Insert(0, pingResult);
-
-            //Update "Ping Stats" details
-            UpdatePingStats(pingResult);
-
-            //log to file if selected
-            if (isLoggingEnabled)
+            if (isPingRunning)
             {
-                logging.LogToTextFile(pingResult);
+                //add results to datagrid
+                dgPingResults.Items.Insert(0, pingResult);
+
+                UpdatePingStatsUI(pingResult);
+
+                if (isLoggingEnabled)
+                    logging.LogToTextFile(pingResult);
             }
         }
 
@@ -168,8 +168,6 @@ namespace SimplePingTool
 
             //Post Ping UI/Var Routine
             PostPingUpdateControls();
-
-            ClearDataFields();
         }
 
         private async void BtnStartPing_Click(object sender, RoutedEventArgs e)
@@ -182,14 +180,13 @@ namespace SimplePingTool
             //Pre-Ping UI/Var routine
             PrePingUpdateControls();
 
-            ClearDataFields();
+            ClearPingResultDataUI();
 
             isPingRunning = true;
-
             while (isPingRunning)
             {
-                await BeginPingTask();
-            } 
+                await StartPingTask();
+            }
         }
 
         private void CbAddressOrIp_DropDownClosed(object sender, EventArgs e)
