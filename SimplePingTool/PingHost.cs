@@ -8,12 +8,19 @@ namespace SimplePingTool
 {
     public class PingHost
     {
-        //interval is based on milliseconds
+        /// <summary>
+        /// Interval between ping replies
+        /// </summary>
         public int IntervalBetweenPings { get; set; }
-        public string AddressOrIp { get; set; }
-        public bool IsPingRunning { get; set; }
 
-        //potential ping statuses
+        /// <summary>
+        /// DNS or IP of host to ping
+        /// </summary>
+        public string AddressOrIp { get; set; }
+
+        /// <summary>
+        /// All possible ping status results
+        /// </summary>
         public enum Status
         {
             ERROR,
@@ -22,16 +29,23 @@ namespace SimplePingTool
             TIMED_OUT,
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="addressOrIp">DNS or IP address of host to ping</param>
+        /// <param name="intervalBetweenPings">Interval in milliseconds between pings</param>
         public PingHost(string addressOrIp = "8.8.8.8",int intervalBetweenPings = 1000)
         {
             this.AddressOrIp = addressOrIp;
             this.IntervalBetweenPings = intervalBetweenPings;
-            this.IsPingRunning = true;
+        }
+        public PingHost()
+        {
+            this.IntervalBetweenPings = 1000;
         }
 
         public async Task<PingResult> StartPingAsync()
         {
-
             Ping sender = new Ping();
 
             PingResult result = new PingResult()
@@ -39,8 +53,6 @@ namespace SimplePingTool
                 TimeStamp = DateTime.Now,
                 AddressOrIp = this.AddressOrIp
             };
-
-
             try
             {
                 //start ping
@@ -191,11 +203,6 @@ namespace SimplePingTool
             }
             //return the ping results
             return result;
-        }
-        //call to stop a ping thats contained within a loop
-        public void StopPing()
-        {
-            this.IsPingRunning = false;
         }
     }
 }

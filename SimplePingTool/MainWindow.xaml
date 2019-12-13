@@ -25,7 +25,7 @@
                         <RowDefinition Height="15*"/>
                     </Grid.RowDefinitions>
                     <Button x:Name="btnStartPing" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Click="BtnStartPing_Click" Width="75" Height="25" Margin="10,2,9.4,2.6" />
-                    <Button x:Name="btnStopPing" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Stop" Click="BtnStopPing_Click" Width="75" Height="24" IsEnabled="False" Margin="10,2.4,9.4,2.4" />
+                    <Button x:Name="btnStopPing" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Stop" Click="BtnStopPing_Click" Width="75" Height="24" IsEnabled="False" Margin="10,3,10,0" />
                     <TextBox x:Name="tbAddressOrIp" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"  Text="Enter an IP or Domain" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" GotFocus="TbAddressOrIp_GotFocus" TextChanged="TbAddressOrIp_TextChanged"  Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2">
                         <TextBox.ToolTip>
                             <ToolTip>
@@ -47,7 +47,7 @@
                         <TextBlock x:Name="tbIntervalValue" FontWeight="Normal" HorizontalAlignment="Left" VerticalAlignment="Center">1</TextBlock>
                         <TextBlock FontWeight="Normal">s interval</TextBlock>
                     </StackPanel>
-          </Grid>
+                </Grid>
             </GroupBox>
             <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center">
                 <DataGrid.Columns>
@@ -58,7 +58,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <GroupBox Header="Ping Stats" HorizontalAlignment="Left" Height="121" Margin="431,0,0,0" VerticalAlignment="Top" Width="188" FontWeight="Bold">
-                <Grid>
+                <Grid x:Name="grdPingStats">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -66,13 +66,14 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="51*"/>
+                        <ColumnDefinition Width="37*"/>
+                        <ColumnDefinition Width="88*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Content="Max. Latency:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
-                    <Label Content="Packets Sent:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
-                    <Label Content="Packets Lost:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10"/>
-                    <Label Content="Avg. Latency:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10">
+                    <Label Content="Max. Latency:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Margin="0,1,0,2" Height="22" Width="69"/>
+                    <Label Content="Packets Sent:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Height="24" Width="67"/>
+                    <Label Content="Packets Lost:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Height="24" Width="66"/>
+                    <Label Content="Avg. Latency:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Margin="0,2,0,1" Height="22" Width="68">
                         <Label.ToolTip>
                             <ToolTip>
                                 Average latency excludes failures or timeouts
@@ -80,10 +81,10 @@
                         </Label.ToolTip>
                     </Label>
 
-                    <Label x:Name="lbAverageLatency" Content="N/A" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontWeight="Normal" />
-                    <Label x:Name="lbPacketsSent" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" FontWeight="Normal"/>
-                    <Label x:Name="lbPacketsLost" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" FontWeight="Normal"/>
-                    <Label x:Name="lbMaxLatency" Content="N/A"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" FontWeight="Normal"/>
+                    <Label x:Name="lbAverageLatency" Content="N/A" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" FontWeight="Normal" Margin="0,0,0,1" Height="24" Width="31" Tag="stats" />
+                    <Label x:Name="lbPacketsSent" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" FontWeight="Normal" Height="24" Width="31" Tag="stats"/>
+                    <Label x:Name="lbPacketsLost" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" FontWeight="Normal" Height="24" Width="31" Tag="stats"/>
+                    <Label x:Name="lbMaxLatency" Content="N/A"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" FontWeight="Normal" Margin="0,1,0,0" Height="24" Width="31" Tag="stats"/>
                 </Grid>
             </GroupBox>
 

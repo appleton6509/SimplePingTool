@@ -11,7 +11,6 @@ namespace SimplePingTool
     {
         private string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
 
-
         public void LogToTextFile(PingResult pingResults)
         {
             using (StreamWriter fs = File.AppendText(fileName))
