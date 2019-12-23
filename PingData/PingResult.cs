@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimplePingTool
+namespace PingData
 {
     public class PingResult
     {

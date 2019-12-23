@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 
 //just making some notes
-namespace SimplePingTool
+namespace PingData
 {
     public class PingHost
     {

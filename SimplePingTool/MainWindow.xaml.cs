@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using PingData;
 
 namespace SimplePingTool
 {
@@ -16,17 +18,21 @@ namespace SimplePingTool
     {
         #region Properties 
         private string AddressOrIp { get; set; }
-        private readonly PingHost pingHost = new PingHost();
+
         private bool isPingRunning = false;
-        public Log logging = new Log();
+        private readonly PingHost pingHost = new PingHost();
+        BindingList<PingResult> pingResultsList = new BindingList<PingResult>();
+        private readonly PingStats stats = new PingStats();
+        public PingLog logging = new PingLog();
 
 
-        //TODO test regex expressions
+        //TODO implement and test regex expressions
         Regex ValidIpAddressRegex = new Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
         Regex ValidHostnameRegex = new Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
 
-        public List<PingResult> results = new List<PingResult>();
+
+
         public List<string> addressOrIpList = new List<string>()
         {
             "8.8.8.8",
@@ -50,14 +56,23 @@ namespace SimplePingTool
         {
             InitializeComponent();
 
+            //bind combo box list to address list
             cbAddressOrIp.ItemsSource = addressOrIpList;
+
+            //update ping results on changes
+            pingResultsList.ListChanged += PingResultsList_ListChanged;
+
+            //update ping stats when changes occur
+            stats.StatsChanged += Stats_StatsChanged;
         }
+
+
 
         #endregion Constructor
 
         #region Helper Methods
 
-        private bool validateIpAddress()
+        private bool ValidateAddress()
         {
             //check an address or ip has been entered
             if (AddressOrIp == null || AddressOrIp == string.Empty)
@@ -72,17 +87,12 @@ namespace SimplePingTool
         {
             //clear data
             dgPingResults.Items.Clear();
-            results.Clear();
+            pingResultsList.Clear();
+            stats.Clear();
 
-            //Clear "Ping Stat" labels
-            string pingStatsLblTag = "stats";
-
-            grdPingStats.Children.OfType<Label>()
-                .Where(label => (string)label.Tag == pingStatsLblTag)
-                .Select(label => label.Content = LabelText.NA);
         }
         //update UI before ping is started
-        private void PrePingUpdateControls()
+        private void PingRunningControlAccess()
         {
             //Enable stop ping btn
             btnStopPing.IsEnabled = true;
@@ -99,7 +109,7 @@ namespace SimplePingTool
         }
 
         //update UI after stop button pressed
-        private void PostPingUpdateControls()
+        private void PingNotRunningControlAccess()
         {
             //enable textbox and combobox when running
             tbAddressOrIp.IsEnabled = true;
@@ -114,47 +124,66 @@ namespace SimplePingTool
 
         }
 
-        private void UpdatePingStatsUI(PingResult pingResults)
+        /// <summary>
+        /// Update Ping Stats UI
+        /// </summary>
+        /// <param name="list"></param>
+        private void UpdatePingStatsUI()
         {
-
-            //add results to ping list for populating ping stats
-            results.Add(pingResults);
-
-            //Update UI for "Ping Stats"
-            double averageLatency = Math.Round(results.Average(x => x.Latency));
-            lbAverageLatency.Content = averageLatency;
-            lbPacketsSent.Content = results.Count;
-
-            //ignore errors in the event no packets succeed
-            try
+            if (stats.PacketsSent == 0)
             {
-                lbMaxLatency.Content = results
-                .Where(x => x.Status == LabelText.SUCCESS.ToString())
-                .Max(x => x.Latency);
+                //Clear "Ping Stat" labels
+                string pingStatsLblTag = "stats";
+
+                grdPingStats.Children.OfType<Label>()
+                    .Where(label => (string)label.Tag == pingStatsLblTag)
+                    .Select(label => label.Content = LabelText.NA);
             }
-            catch { /*ignore*/ }
 
-            lbPacketsLost.Content = results
-                .Count(x => x.Status != LabelText.SUCCESS.ToString()).ToString();
-
+            lbAverageLatency.Content = stats.AverageLatency;
+            lbMaxLatency.Content = stats.MaxLatency;
+            lbPacketsLost.Content = stats.PacketsLost;
+            lbPacketsSent.Content = stats.PacketsSent;
         }
 
-        private async Task StartPingTask()
+        private void HandleNewPingResult(PingResult newPingResult)
+        {
+            //update datagrid
+            dgPingResults.Items.Add(newPingResult);
+
+            //update ping stats
+            stats.Add(newPingResult);
+
+            //log to file
+            LogToFile(newPingResult);
+        }
+
+        /// <summary>
+        /// Log ping results to a file
+        /// </summary>
+        /// <param name="pingResult">new PingResult to append to the file</param>
+        private void LogToFile(PingResult pingResult)
         {
             bool isLoggingEnabled = (bool)chbEnableLogging.IsChecked;
 
+            if (isLoggingEnabled)
+                logging.LogToTextFile(pingResult);
+        }
+
+        /// <summary>
+        /// Start an async ping
+        /// </summary>
+        /// <returns></returns>
+        private async Task StartPingTask()
+        {
             //ping host and log results
             PingResult pingResult = await pingHost.StartPingAsync();
 
+            //discard ping results for longer intervals if ping was manually stopped by user
             if (isPingRunning)
             {
-                //add results to datagrid
-                dgPingResults.Items.Insert(0, pingResult);
-
-                UpdatePingStatsUI(pingResult);
-
-                if (isLoggingEnabled)
-                    logging.LogToTextFile(pingResult);
+                //add results to ping result list
+                pingResultsList.Add(pingResult);
             }
         }
 
@@ -167,22 +196,23 @@ namespace SimplePingTool
             isPingRunning = false;
 
             //Post Ping UI/Var Routine
-            PostPingUpdateControls();
+            PingNotRunningControlAccess();
         }
 
         private async void BtnStartPing_Click(object sender, RoutedEventArgs e)
         {
-            if (!validateIpAddress())
+            if (!ValidateAddress())
             {
                 e.Handled = true;
             }
 
             //Pre-Ping UI/Var routine
-            PrePingUpdateControls();
+            PingRunningControlAccess();
 
             ClearPingResultDataUI();
 
             isPingRunning = true;
+
             while (isPingRunning)
             {
                 await StartPingTask();
@@ -226,6 +256,21 @@ namespace SimplePingTool
 
             //update pinghost interval
             pingHost.IntervalBetweenPings = intervalInMilliseconds;
+        }
+
+
+        private void PingResultsList_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            BindingList<PingResult> list = (BindingList<PingResult>)sender;
+            PingResult newPingResult = list[e.NewIndex];
+
+            if (list.Count > 0)
+                HandleNewPingResult(newPingResult);
+        }
+
+        private void Stats_StatsChanged(object sender, EventArgs e)
+        {
+            UpdatePingStatsUI();
         }
 
         #endregion Event Handlers

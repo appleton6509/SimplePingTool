@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplePingTool
+namespace PingData
 {
-    public class Log
+    public class PingLog
     {
         private string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
 
