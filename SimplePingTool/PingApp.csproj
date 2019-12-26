@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1FBA9F0D-5E57-4D5B-AF90-0128ED1EB66E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SimplyPingTool</RootNamespace>
+    <RootNamespace>SimplePingTool</RootNamespace>
     <AssemblyName>SimplePingTool</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -108,6 +108,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModelView\MainWindowModelView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

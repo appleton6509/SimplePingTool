@@ -4,36 +4,29 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.ComponentModel;
 using PingData;
+using System.Collections.ObjectModel;
+using SimplePingTool.ModelView;
 
 namespace SimplePingTool
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Main Application of the Simple Ping Tool
     /// </summary>
     /// test
     public partial class MainWindow : Window
     {
         #region Properties 
-        private string AddressOrIp { get; set; }
+        private bool isPingRunning { get; set; } = false;
+        private PingHost Ping { get; set; } = new PingHost();
 
-        private bool isPingRunning = false;
-        private readonly PingHost pingHost = new PingHost();
-        BindingList<PingResult> pingResultsList = new BindingList<PingResult>();
-        private readonly PingStats stats = new PingStats();
-        public PingLog logging = new PingLog();
+        public PingStats Stats { get; set; } = new PingStats();
 
+        private PingLog PingLogger { get; set; } = new PingLog();
 
-        //TODO implement and test regex expressions
-        Regex ValidIpAddressRegex = new Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+        public ObservableCollection<PingResult> PingResultsList = new ObservableCollection<PingResult>();
 
-        Regex ValidHostnameRegex = new Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
-
-
-
-        public List<string> addressOrIpList = new List<string>()
+        public ObservableCollection<string> AddressList { get; set; } = new ObservableCollection<string>()
         {
             "8.8.8.8",
             "8.8.4.4",
@@ -56,41 +49,31 @@ namespace SimplePingTool
         {
             InitializeComponent();
 
-            //bind combo box list to address list
-            cbAddressOrIp.ItemsSource = addressOrIpList;
+
+            cbAddressOrIp.ItemsSource = AddressList;
+
+            dgPingResults.ItemsSource = PingResultsList;
 
             //update ping results on changes
-            pingResultsList.ListChanged += PingResultsList_ListChanged;
+            PingResultsList.CollectionChanged  += PingResultsList_CollectionChanged;
 
             //update ping stats when changes occur
-            stats.StatsChanged += Stats_StatsChanged;
+            Stats.StatsChanged += Stats_StatsChanged;
         }
-
 
 
         #endregion Constructor
 
         #region Helper Methods
 
-        private bool ValidateAddress()
-        {
-            //check an address or ip has been entered
-            if (AddressOrIp == null || AddressOrIp == string.Empty)
-            {
-                MessageBox.Show("Address field cannot be empty.", "Error");
-                return false;
-            }
-            return true;
-        }
-
         private void ClearPingResultDataUI()
         {
             //clear data
-            dgPingResults.Items.Clear();
-            pingResultsList.Clear();
-            stats.Clear();
+            PingResultsList.Clear();
+            Stats.Clear();
 
         }
+
         //update UI before ping is started
         private void PingRunningControlAccess()
         {
@@ -111,16 +94,16 @@ namespace SimplePingTool
         //update UI after stop button pressed
         private void PingNotRunningControlAccess()
         {
-            //enable textbox and combobox when running
-            tbAddressOrIp.IsEnabled = true;
-            cbAddressOrIp.IsEnabled = true;
+            //Disable stop button
+            btnStopPing.IsEnabled = false;
 
             //update text on start button and enable it
             btnStartPing.Content = LabelText.START;
             btnStartPing.IsEnabled = true;
 
-            //Disable stop button
-            btnStopPing.IsEnabled = false;
+            //enable textbox and combobox when running
+            tbAddressOrIp.IsEnabled = true;
+            cbAddressOrIp.IsEnabled = true;
 
         }
 
@@ -130,29 +113,17 @@ namespace SimplePingTool
         /// <param name="list"></param>
         private void UpdatePingStatsUI()
         {
-            if (stats.PacketsSent == 0)
-            {
-                //Clear "Ping Stat" labels
-                string pingStatsLblTag = "stats";
-
-                grdPingStats.Children.OfType<Label>()
-                    .Where(label => (string)label.Tag == pingStatsLblTag)
-                    .Select(label => label.Content = LabelText.NA);
-            }
-
-            lbAverageLatency.Content = stats.AverageLatency;
-            lbMaxLatency.Content = stats.MaxLatency;
-            lbPacketsLost.Content = stats.PacketsLost;
-            lbPacketsSent.Content = stats.PacketsSent;
+           lbAverageLatency.Content = Stats.AverageLatency;
+            lbMaxLatency.Content = Stats.MaxLatency;
+            lbPacketsLost.Content = Stats.PacketsLost;
+            lbPacketsSent.Content = Stats.PacketsSent;
         }
 
         private void HandleNewPingResult(PingResult newPingResult)
         {
-            //update datagrid
-            dgPingResults.Items.Add(newPingResult);
 
             //update ping stats
-            stats.Add(newPingResult);
+            Stats.Add(newPingResult);
 
             //log to file
             LogToFile(newPingResult);
@@ -167,7 +138,7 @@ namespace SimplePingTool
             bool isLoggingEnabled = (bool)chbEnableLogging.IsChecked;
 
             if (isLoggingEnabled)
-                logging.LogToTextFile(pingResult);
+                PingLogger.LogToTextFile(pingResult);
         }
 
         /// <summary>
@@ -177,13 +148,13 @@ namespace SimplePingTool
         private async Task StartPingTask()
         {
             //ping host and log results
-            PingResult pingResult = await pingHost.StartPingAsync();
+            PingResult pingResult = await Ping.StartPingAsync();
 
             //discard ping results for longer intervals if ping was manually stopped by user
             if (isPingRunning)
             {
                 //add results to ping result list
-                pingResultsList.Add(pingResult);
+                PingResultsList.Add(pingResult);
             }
         }
 
@@ -201,9 +172,13 @@ namespace SimplePingTool
 
         private async void BtnStartPing_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateAddress())
+            if (!Validator.IsValidAddress(tbAddressOrIp.Text))
             {
-                e.Handled = true;
+                return;
+            }
+            else
+            {
+                Ping.AddressOrIp = tbAddressOrIp.Text;
             }
 
             //Pre-Ping UI/Var routine
@@ -219,28 +194,11 @@ namespace SimplePingTool
             }
         }
 
-        private void CbAddressOrIp_DropDownClosed(object sender, EventArgs e)
-        {
-            //update addressOrIP var and text box when dropdown is closed.
-            ComboBox addressSelection = (ComboBox)sender;
-            tbAddressOrIp.Text = addressSelection.Text;
-        }
-
         private void TbAddressOrIp_GotFocus(object sender, RoutedEventArgs e)
         {
             //when focused on this textbox field, clear the field.
             TextBox tbAddress = (TextBox)sender;
             tbAddress.Text = string.Empty;
-        }
-
-        private void TbAddressOrIp_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-            //TODO add regex validation and error providor
-            TextBox tbAddress = (TextBox)sender;
-            AddressOrIp = tbAddress.Text;
-
-            pingHost.AddressOrIp = AddressOrIp;
         }
 
         private void slInterval_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -249,28 +207,24 @@ namespace SimplePingTool
             Slider sliderIntervalValue = (Slider)sender;
             int intervalInMilliseconds = (int)sliderIntervalValue.Value * 1000;
 
-            if (sliderIntervalValue.IsLoaded)
-            {
-                tbIntervalValue.Text = sliderIntervalValue.Value.ToString();
-            }
-
             //update pinghost interval
-            pingHost.IntervalBetweenPings = intervalInMilliseconds;
-        }
-
-
-        private void PingResultsList_ListChanged(object sender, ListChangedEventArgs e)
-        {
-            BindingList<PingResult> list = (BindingList<PingResult>)sender;
-            PingResult newPingResult = list[e.NewIndex];
-
-            if (list.Count > 0)
-                HandleNewPingResult(newPingResult);
+            Ping.IntervalBetweenPings = intervalInMilliseconds;
         }
 
         private void Stats_StatsChanged(object sender, EventArgs e)
         {
             UpdatePingStatsUI();
+        }
+
+        private void PingResultsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if ((sender as ObservableCollection<PingResult>).Count > 0)
+            {
+                foreach (PingResult newPing in e.NewItems)
+                {
+                    HandleNewPingResult(newPing);
+                }
+            }
         }
 
         #endregion Event Handlers

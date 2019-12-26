@@ -9,7 +9,7 @@ namespace PingData
 {
     public class PingLog
     {
-        private string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
+        private readonly string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
 
         public void LogToTextFile(PingResult pingResults)
         {

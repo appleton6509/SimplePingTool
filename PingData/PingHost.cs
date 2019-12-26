@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
@@ -11,12 +12,37 @@ namespace PingData
         /// <summary>
         /// Interval between ping replies
         /// </summary>
-        public int IntervalBetweenPings { get; set; }
+        public int IntervalBetweenPings { get; set; } = 1000;
 
         /// <summary>
         /// DNS or IP of host to ping
         /// </summary>
         public string AddressOrIp { get; set; }
+
+        public Dictionary<int, string> ErrorCodes { get; } = new Dictionary<int, string>()
+        {
+            { -1, "Unknown Error" },
+            { 0, "SUCCESS" },
+            { 11001, "The reply buffer was too small." },
+            { 11002, "The destination network was unreachable" },
+            { 11003, "the destination host was unreachable" },
+            { 11004, "The destination protocol was unreachable" },
+            { 11005, "The destination port was unreachable" },
+            { 11006, "Insufficient IP resources were available" },
+            { 11007, "A bad IP Option was specified" },
+            { 11008, "A hardware error occured" },
+            { 11009, "The packet was too big" },
+            { 11010, "Packet has timed out" },
+            { 11011, "A bad request" },
+            { 11012, "A bad route" },
+            { 11013, "The TTL expired in transit" },
+            { 11014, "The TTL expired during fragment reassembly" },
+            { 11015, "a parameter problem" },
+            { 11016, "Datagrams are arriving too fast to be processed and have been discarded" },
+            { 11017, "An IP option was too big" },
+            { 11018, "a bad destination" },
+            { 11050, "A general failure. This error can be returned for some malformed ICMP packets" },
+        };
 
         /// <summary>
         /// All possible ping status results
@@ -34,15 +60,12 @@ namespace PingData
         /// </summary>
         /// <param name="addressOrIp">DNS or IP address of host to ping</param>
         /// <param name="intervalBetweenPings">Interval in milliseconds between pings</param>
-        public PingHost(string addressOrIp = "8.8.8.8",int intervalBetweenPings = 1000)
+        public PingHost(string addressOrIp = "8.8.8.8", int intervalBetweenPings = 1000)
         {
             this.AddressOrIp = addressOrIp;
             this.IntervalBetweenPings = intervalBetweenPings;
         }
-        public PingHost()
-        {
-            this.IntervalBetweenPings = 1000;
-        }
+        public PingHost() { }
 
         public async Task<PingResult> StartPingAsync()
         {
@@ -55,120 +78,47 @@ namespace PingData
             };
             try
             {
-                //start ping
+                //Start Ping
                 PingReply reply = await sender.SendPingAsync(this.AddressOrIp);
 
                 //log the ping reply status code
                 result.StatusCode = reply.Status.GetHashCode();
 
-                //check what the status of the ping reply is
-                switch (reply.Status.GetHashCode())
+
+                if (result.StatusCode == 0) //Successful ping
                 {
-                    //Cases determine the result of the ping test and writes the appropriate error message per case.
-                    //
-                    //
-                    case 0: //SUCCESS
-                        result.Status = Status.SUCCESS.ToString();
+                    result.Status = Status.SUCCESS;
 
-                        //roundtrips less than 1ms are reported as 1 ms.
-                        if (reply.RoundtripTime < 1)
-                        {
-                            result.Latency = 1;
+                    //roundtrips less than 1ms are reported as 1 ms.
+                    if (reply.RoundtripTime < 1)
+                    {
+                        result.Latency = 1;
 
-                        } else
-                        {
-                            result.Latency = (int)reply.RoundtripTime;
-                        }
-                        break;
+                    }
+                    else
+                    {
+                        result.Latency = (int)reply.RoundtripTime;
+                    }
 
-                    case 11001:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The reply buffer was too small.";
-                        break;
-                    case 11002:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The destination network was unreachable";
-                        break;
-                    case 11003:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "the destination host was unreachable";
-                        break;
-                    case 11004:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The destination protocol was unreachable";
-                        break;
-                    case 11005:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The destination port was unreachable";
-                        break;
-                    case 11006:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "Insufficient IP resources were available";
-                        break;
-                    case 11007:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "A bad IP Option was specified";
-                        break;
-                    case 11008:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "A hardware error occured";
-                        break;
-                    case 11009:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The packet was too big";
-                        break;
-                    case 11010: //TIMEOUT
-                        result.Status = Status.TIMED_OUT.ToString();
-                        result.ErrorMessage = "Packet has timed out";
-                        break;
-                    case 11011:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "A bad request";
-                        break;
-                    case 11012:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "A bad route";
-                        break;
-                    case 11013:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The TTL expired in transit";
-                        break;
-                    case 11014:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "The TTL expired during fragment reassembly";
-                        break;
-                    case 11015:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "a parameter problem";
-                        break;
-                    case 11016:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "Datagrams are arriving too fast to be processed and have been discarded";
-                        break;
-                    case 11017:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "An IP option was too big";
-                        break;
-                    case 11018:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "a bad destination";
-                        break;
-                    case 11050:
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "A general failure. This error can be returned for some malformed ICMP packets";
-                        break;
-                    default: //All other Errors, this shouldnt happen as all errors have been accounted for
-                        result.Status = Status.ERROR.ToString();
-                        result.ErrorMessage = "Unknown error";
-                        break;
                 }
+                else if (ErrorCodes.ContainsKey(result.StatusCode)) //Ping encountered an error
+                {
+                    result.Status = Status.ERROR;
+                    result.ErrorMessage = ErrorCodes[result.StatusCode];
+                }
+                else // Ping encountered and unknown error
+                {
+                    result.Status = Status.ERROR;
+                    result.ErrorMessage = ErrorCodes[-1];
+                }
+
 
             }
             catch (ArgumentNullException b)
             {
                 //exception occured when address is NULL
                 //Set result to ERROR;
-                result.Status = Status.ERROR.ToString();
+                result.Status = Status.ERROR;
                 result.ErrorMessage = b.InnerException.Message;
                 result.AddressOrIp = b.Message;
             }
@@ -176,28 +126,28 @@ namespace PingData
             {
                 //exception occured, address is in incorrect format
                 //Set result to ERROR
-                result.Status = Status.ERROR.ToString();
+                result.Status = Status.ERROR;
                 result.ErrorMessage = b.InnerException.Message;
                 result.AddressOrIp = b.Message;
             }
             catch (Exception b)
             {
                 //unknown error
-                result.Status = Status.ERROR.ToString();
+                result.Status = Status.ERROR;
                 result.ErrorMessage = b.InnerException.Message;
                 result.AddressOrIp = b.Message;
             }
             finally
             {
                 //if ping has error, set Latency to zero
-                if (result.Status != Status.SUCCESS.ToString())
+                if (result.Status != Status.SUCCESS)
                 {
                     result.Latency = 0;
                 }
 
                 //wait for the designated interval 
                 await Task.Delay(IntervalBetweenPings);
-                
+
                 //release resource
                 sender.Dispose();
             }
