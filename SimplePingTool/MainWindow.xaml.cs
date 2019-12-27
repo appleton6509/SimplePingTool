@@ -119,15 +119,6 @@ namespace SimplePingTool
             lbPacketsSent.Content = Stats.PacketsSent;
         }
 
-        private void HandleNewPingResult(PingResult newPingResult)
-        {
-
-            //update ping stats
-            Stats.Add(newPingResult);
-
-            //log to file
-            LogToFile(newPingResult);
-        }
 
         /// <summary>
         /// Log ping results to a file
@@ -141,6 +132,15 @@ namespace SimplePingTool
                 PingLogger.LogToTextFile(pingResult);
         }
 
+        private void HandleNewPingResult(PingResult newPingResult)
+        {
+
+            //update ping stats
+            Stats.Add(newPingResult);
+
+            //log to file
+            LogToFile(newPingResult);
+        }
         /// <summary>
         /// Start an async ping
         /// </summary>
@@ -157,20 +157,7 @@ namespace SimplePingTool
                 PingResultsList.Add(pingResult);
             }
         }
-
-        #endregion Helper Methods
-
-        #region Event Handlers
-
-        private void BtnStopPing_Click(object sender, RoutedEventArgs e)
-        {
-            isPingRunning = false;
-
-            //Post Ping UI/Var Routine
-            PingNotRunningControlAccess();
-        }
-
-        private async void BtnStartPing_Click(object sender, RoutedEventArgs e)
+        private async void StartPing()
         {
             if (!Validator.IsValidAddress(tbAddressOrIp.Text))
             {
@@ -193,6 +180,29 @@ namespace SimplePingTool
                 await StartPingTask();
             }
         }
+
+        private void StopPing()
+        {
+            isPingRunning = false;
+
+            //Post Ping UI/Var Routine
+            PingNotRunningControlAccess();
+        }
+
+        #endregion Helper Methods
+
+        #region Event Handlers
+
+        private void BtnStopPing_Click(object sender, RoutedEventArgs e)
+        {
+            StopPing();
+        }
+
+        private void BtnStartPing_Click(object sender, RoutedEventArgs e)
+        {
+            StartPing();
+        }
+
 
         private void TbAddressOrIp_GotFocus(object sender, RoutedEventArgs e)
         {
