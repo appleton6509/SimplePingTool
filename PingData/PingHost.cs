@@ -10,16 +10,32 @@ namespace PingData
     public class PingHost
     {
         /// <summary>
-        /// Interval between ping replies
+        /// Interval between ping replies in milliseconds
         /// </summary>
-        public int IntervalBetweenPings { get; set; } = 1000;
+        private int _IntervalBetweenPings;
+        /// <summary>
+        /// Interval between ping replies in seconds
+        /// </summary>
+        public int IntervalBetweenPings
+        {
+            get
+            {
+                return _IntervalBetweenPings / 1000;
+            }
+            set {
+                _IntervalBetweenPings = value * 1000;
+            }
+        }
 
         /// <summary>
         /// DNS or IP of host to ping
         /// </summary>
         public string AddressOrIp { get; set; }
 
-        public Dictionary<int, string> ErrorCodes { get; } = new Dictionary<int, string>()
+        /// <summary>
+        /// List of status codes and definitions returns from a ping reply
+        /// </summary>
+        private Dictionary<int, string> ErrorCodes { get; } = new Dictionary<int, string>()
         {
             { -1, "Unknown Error" },
             { 0, "SUCCESS" },
@@ -54,7 +70,7 @@ namespace PingData
             FAILURE,
             TIMED_OUT,
         }
-
+        #region Constructor
         /// <summary>
         /// 
         /// </summary>
@@ -63,10 +79,14 @@ namespace PingData
         public PingHost(string addressOrIp = "8.8.8.8", int intervalBetweenPings = 1000)
         {
             this.AddressOrIp = addressOrIp;
-            this.IntervalBetweenPings = intervalBetweenPings;
+            this._IntervalBetweenPings = intervalBetweenPings;
         }
-        public PingHost() { }
+        public PingHost() {
+            this._IntervalBetweenPings = 1000;
+        }
+        #endregion Constructor
 
+        #region Public Methods
         public async Task<PingResult> StartPingAsync()
         {
             Ping sender = new Ping();
@@ -76,43 +96,14 @@ namespace PingData
                 TimeStamp = DateTime.Now,
                 AddressOrIp = this.AddressOrIp
             };
+
+
             try
             {
-                //Start Ping
+                
                 PingReply reply = await sender.SendPingAsync(this.AddressOrIp);
-
-                //log the ping reply status code
-                result.StatusCode = reply.Status.GetHashCode();
-
-
-                if (result.StatusCode == 0) //Successful ping
-                {
-                    result.Status = Status.SUCCESS;
-
-                    //roundtrips less than 1ms are reported as 1 ms.
-                    if (reply.RoundtripTime < 1)
-                    {
-                        result.Latency = 1;
-
-                    }
-                    else
-                    {
-                        result.Latency = (int)reply.RoundtripTime;
-                    }
-
-                }
-                else if (ErrorCodes.ContainsKey(result.StatusCode)) //Ping encountered an error
-                {
-                    result.Status = Status.ERROR;
-                    result.ErrorMessage = ErrorCodes[result.StatusCode];
-                }
-                else // Ping encountered and unknown error
-                {
-                    result.Status = Status.ERROR;
-                    result.ErrorMessage = ErrorCodes[-1];
-                }
-
-
+                result = GetStatus(result, reply);
+                result = GetLatency(result, reply);
             }
             catch (ArgumentNullException b)
             {
@@ -139,14 +130,8 @@ namespace PingData
             }
             finally
             {
-                //if ping has error, set Latency to zero
-                if (result.Status != Status.SUCCESS)
-                {
-                    result.Latency = 0;
-                }
-
                 //wait for the designated interval 
-                await Task.Delay(IntervalBetweenPings);
+                await Task.Delay(_IntervalBetweenPings);
 
                 //release resource
                 sender.Dispose();
@@ -154,5 +139,72 @@ namespace PingData
             //return the ping results
             return result;
         }
+        #endregion Public Methods
+
+
+        #region Private Methods
+        /// <summary>
+        /// Returns the latency from a ping reply object
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="reply"></param>
+        /// <returns></returns>
+        private PingResult GetLatency(PingResult result, PingReply reply)
+        {
+
+            int successCode = 0;
+
+            if (reply.Status.GetHashCode() != successCode) //ping was not successfull
+            {
+                result.Latency = 0;
+            } else
+            {
+                if (reply.RoundtripTime < 1)           //roundtrips less than 1ms are reported as 1 ms.
+                {
+                    result.Latency = 1;
+
+                }
+                else
+                {
+                    result.Latency = (int)reply.RoundtripTime;
+                }
+            }
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Returns the ping status from a pingreply object
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="reply"></param>
+        /// <returns></returns>
+        private PingResult GetStatus(PingResult result, PingReply reply)
+        {
+            //log the ping reply status code
+            result.StatusCode = reply.Status.GetHashCode();
+
+
+            int successCode = 0;
+            if (result.StatusCode == successCode) //Successful ping
+            {
+                result.Status = Status.SUCCESS;
+
+            }
+            else if (ErrorCodes.ContainsKey(result.StatusCode)) //Ping encountered an error
+            {
+                result.Status = Status.ERROR;
+                result.ErrorMessage = ErrorCodes[result.StatusCode];
+            }
+            else // Ping encountered and unknown error
+            {
+                result.Status = Status.ERROR;
+                result.ErrorMessage = ErrorCodes[-1];
+            }
+
+            return result;
+        }
+        #endregion Private Methods
     }
 }

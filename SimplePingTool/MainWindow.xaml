@@ -8,6 +8,9 @@
         mc:Ignorable="d"
         Title="Simple Ping Tool" Height="415" MinHeight="415" MinWidth="645" Width="645" 
         WindowStartupLocation="CenterScreen" Opacity="0.94">
+    <Window.DataContext>
+        <viewmodel:MainWindowModelView x:Name="vm"></viewmodel:MainWindowModelView>
+    </Window.DataContext>
     <Border Padding="5">
         <Grid>
             <Grid.RowDefinitions>
@@ -26,16 +29,16 @@
                         <RowDefinition Height="14*"/>
                         <RowDefinition Height="15*"/>
                     </Grid.RowDefinitions>
-                    <Button x:Name="btnStartPing" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Click="BtnStartPing_Click" Width="75" Height="25" Margin="10,2,9.4,2.6" />
-                    <Button x:Name="btnStopPing" IsEnabled="false" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Stop" Click="BtnStopPing_Click" Width="75" Height="24" Margin="10,3,10,0" />
-                    <TextBox x:Name="tbAddressOrIp" Text="{Binding ElementName=cbAddressOrIp, Path=Text}" Grid.Row="0"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" GotFocus="TbAddressOrIp_GotFocus" Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2" >
+                    <Button x:Name="btnStartPing" Command="{Binding StartPingCommand}" IsEnabled="{Binding IsPingNotRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Width="75" Height="25" Margin="10,2,9.4,2.6" />
+                    <Button x:Name="btnStopPing" Command="{Binding StopPingCommand}" IsEnabled="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Stop" Width="75" Height="24" Margin="10,3,10,0" />
+                    <TextBox x:Name="tbAddressOrIp" Text="{Binding Ping.AddressOrIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2" >
                         <TextBox.ToolTip>
                             <ToolTip>
                                 Enter an IP Address or Domain Name such as:    8.8.8.8  or  google.com
                             </ToolTip>
                         </TextBox.ToolTip>
                     </TextBox>
-                    <ComboBox x:Name="cbAddressOrIp" ItemsSource="{Binding AddressList}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Padding="7,0,0,0" Width="204" Height="24" FontWeight="Normal" Margin="94,2.4,0.4,2.4" Grid.ColumnSpan="2" />
+                    <ComboBox x:Name="cbAddressOrIp" ItemsSource="{Binding AddressList}" SelectedItem="{Binding ElementName=tbAddressOrIp, Path=Text, Mode=OneWayToSource}" IsEnabled="{Binding IsPingNotRunning}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Padding="7,0,0,0" Width="204" Height="24" FontWeight="Normal" Margin="94,2.4,0.4,2.4" Grid.ColumnSpan="2" />
                     <Label Content="Enable Logs" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="10" Height="25" Margin="0,3.6,196.2,1" Width="82" Grid.ColumnSpan="2">
                         <Label.ToolTip>
                             <ToolTip>
@@ -43,15 +46,15 @@
                             </ToolTip>
                         </Label.ToolTip>
                     </Label>
-                    <CheckBox x:Name="chbEnableLogging" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
-                    <Slider x:Name="slInterval" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5" Value="1" Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds." ValueChanged="slInterval_ValueChanged" />
+                    <CheckBox x:Name="chbEnableLogging" IsChecked="{Binding IsLoggingEnabled}" Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
+                    <Slider x:Name="slInterval" Value="{Binding Ping.IntervalBetweenPings}" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5"  Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds."/>
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <Label x:Name="tbIntervalValue" Content="{Binding ElementName=slInterval, Path=Value}" FontWeight="Normal" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="5,5,0,5"></Label>
                         <Label FontWeight="Normal" Padding="0,5,5,5" RenderTransformOrigin="1.179,-3.526" Width="67">s interval</Label>
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <DataGrid Grid.Row="2" x:Name="dgPingResults" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center" AutoGenerateColumns="false">
+            <DataGrid Grid.Row="2" x:Name="dgPingResults" ItemsSource="{Binding PingResultsList}" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center" AutoGenerateColumns="false">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Descending"/>
                     <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Descending"/>
@@ -60,7 +63,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <GroupBox Header="Ping Stats" HorizontalAlignment="Left" Height="121" Margin="431,0,0,0" VerticalAlignment="Top" Width="188" FontWeight="Bold">
-                <Grid x:Name="grdPingStats">
+                <Grid x:Name="grdPingStats" DataContext="{Binding Stats}">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -83,10 +86,10 @@
                         </Label.ToolTip>
                     </Label>
 
-                    <Label x:Name="lbAverageLatency" Content="N/A" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" FontWeight="Normal" Margin="0,0,0,1" Height="24" Width="31" Tag="stats" />
-                    <Label x:Name="lbPacketsSent" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" FontWeight="Normal" Height="24" Width="31" Tag="stats"/>
-                    <Label x:Name="lbPacketsLost" Content="N/A"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" FontWeight="Normal" Height="24" Width="31" Tag="stats"/>
-                    <Label x:Name="lbMaxLatency" Content="N/A"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" FontWeight="Normal" Margin="0,1,0,0" Height="24" Width="31" Tag="stats"/>
+                    <Label x:Name="lbAverageLatency" Content="{Binding AverageLatency}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" FontWeight="Normal" Margin="0,0,0,1" Height="24" Width="31"  />
+                    <Label x:Name="lbPacketsSent" Content="{Binding PacketsSent}"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" FontWeight="Normal" Height="24" Width="31"/>
+                    <Label x:Name="lbPacketsLost" Content="{Binding PacketsLost}"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" FontWeight="Normal" Height="24" Width="31"/>
+                    <Label x:Name="lbMaxLatency" Content="{Binding MaxLatency}"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" FontWeight="Normal" Margin="0,1,0,0" Height="24" Width="31"/>
                 </Grid>
             </GroupBox>
 

@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PingLog.cs" />
+    <Compile Include="LogPingResult.cs" />
     <Compile Include="PingHost.cs" />
     <Compile Include="PingResult.cs" />
     <Compile Include="PingStats.cs" />

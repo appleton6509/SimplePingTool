@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace PingData
 {
-    public class PingLog
+    public static class LogPingResult
     {
-        private readonly string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
+        private static readonly string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
 
-        public void LogToTextFile(PingResult pingResults)
+        public static void LogToTextFile(PingResult pingResults)
         {
             using (StreamWriter fs = File.AppendText(fileName))
             {

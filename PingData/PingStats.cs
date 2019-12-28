@@ -80,7 +80,6 @@ namespace PingData
         }
         private int _packetsLost;
 
-
         public PingStats()
         {
             _packetsLost = 0;
@@ -104,7 +103,7 @@ namespace PingData
                 //On successful packet send, determine if max latency increased
                 if (result.Latency > _maxLatency)
                 {
-                    _maxLatency = result.Latency;
+                    MaxLatency = result.Latency;
                 }
                 //Latency is less then zero, set to zero
                 if (result.Latency < 0)
@@ -121,9 +120,7 @@ namespace PingData
 
             Results.Add(result);
 
-            OnPropertyChanged("AverageLatency");
-
-            OnStatsChange(EventArgs.Empty);
+            OnPropertyChanged(nameof(AverageLatency));
         }
 
         /// <summary>
@@ -136,7 +133,6 @@ namespace PingData
             PacketsSent = 0;
             MaxLatency = 0;
 
-            OnStatsChange(EventArgs.Empty);
         }
 
         /// <summary>
@@ -147,14 +143,5 @@ namespace PingData
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        /// <summary>
-        /// Event handler when stats have changed
-        /// </summary>
-        public event EventHandler StatsChanged;
-        protected virtual void OnStatsChange(EventArgs e)
-        {
-            StatsChanged?.Invoke(this, e);
-        } 
     }
 }
