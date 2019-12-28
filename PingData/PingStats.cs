@@ -13,7 +13,7 @@ namespace PingData
         /// <summary>
         /// A list for populating Ping Statistics
         /// </summary>
-        readonly List<PingResult> Results = new List<PingResult>();
+        private List<PingResult> Results = new List<PingResult>();
 
         /// <summary>
         /// calculated average latency
@@ -27,11 +27,11 @@ namespace PingData
 
                 else
                 {
-                    List<PingResult> found = Results.FindAll(x => x.Status == PingHost.Status.SUCCESS);
+                    List<PingResult> successfulPings = Results.FindAll(x => x.Status == PingHost.Status.SUCCESS);
 
-                    if (found.Count > 0)    //if Successful pings are found, return average 
+                    if (successfulPings.Count > 0)    //if Successful pings are found, return average 
                     {
-                        return Math.Round(found.Average(x => x.Latency));
+                        return Math.Round(successfulPings.Average(x => x.Latency));
                     }
                     else        //no successful pings, return 0
                         return 0;
@@ -135,6 +135,8 @@ namespace PingData
 
         }
 
+        #region INotifyPropertyChanged
+
         /// <summary>
         /// Event when a property has changed
         /// </summary>
@@ -143,5 +145,6 @@ namespace PingData
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion INotifyPropertyChanged
     }
 }

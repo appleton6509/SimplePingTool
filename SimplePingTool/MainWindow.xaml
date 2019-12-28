@@ -31,7 +31,7 @@
                     </Grid.RowDefinitions>
                     <Button x:Name="btnStartPing" Command="{Binding StartPingCommand}" IsEnabled="{Binding IsPingNotRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Width="75" Height="25" Margin="10,2,9.4,2.6" />
                     <Button x:Name="btnStopPing" Command="{Binding StopPingCommand}" IsEnabled="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Stop" Width="75" Height="24" Margin="10,3,10,0" />
-                    <TextBox x:Name="tbAddressOrIp" Text="{Binding Ping.AddressOrIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2" >
+                    <TextBox x:Name="tbAddressOrIp" Text="{Binding Ping.AddressOrIp, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2" >
                         <TextBox.ToolTip>
                             <ToolTip>
                                 Enter an IP Address or Domain Name such as:    8.8.8.8  or  google.com

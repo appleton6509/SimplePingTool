@@ -19,6 +19,7 @@ namespace SimplePingTool
         public MainWindow()
         {
             InitializeComponent();
+          
 
         }
     }

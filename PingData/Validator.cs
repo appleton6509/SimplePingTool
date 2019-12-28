@@ -20,7 +20,7 @@ namespace PingData
         /// </summary>
         private static Regex HostNameRegex = new Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
 
-        private static readonly Dictionary<string, string> Errors = new Dictionary<string, string>()
+        public static readonly Dictionary<string, string> Errors = new Dictionary<string, string>()
         {
             {"EmptyAddress","Please enter an IP or DNS" },
             {"InvalidAddress","Enter a valid IP address or DNS" },
@@ -36,10 +36,8 @@ namespace PingData
             string address = ipOrDNS;
             if (address == String.Empty || address == null)
             {
-                MessageBox.Show(Errors["EmptyAddress"]);
                 return false;
             }
-            
             
             if (IpAddressRegex.IsMatch(address) || HostNameRegex.IsMatch(address))
             {
@@ -47,7 +45,6 @@ namespace PingData
             }
             else
             {
-                MessageBox.Show(Errors["InvalidAddress"]);
                 return false;
             }
         } 

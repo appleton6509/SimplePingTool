@@ -1,13 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 
 //just making some notes
 namespace PingData
 {
-    public class PingHost
+    static class PingStatus
+    {
+        /// <summary>
+        /// List of status codes and definitions returns from a ping reply
+        /// </summary>
+        public static Dictionary<int, string> Message { get; } = new Dictionary<int, string>()
+        {
+            { -1, "Unknown Error" },
+            { 0, "SUCCESS" },
+            { 11001, "The reply buffer was too small." },
+            { 11002, "The destination network was unreachable" },
+            { 11003, "the destination host was unreachable" },
+            { 11004, "The destination protocol was unreachable" },
+            { 11005, "The destination port was unreachable" },
+            { 11006, "Insufficient IP resources were available" },
+            { 11007, "A bad IP Option was specified" },
+            { 11008, "A hardware error occured" },
+            { 11009, "The packet was too big" },
+            { 11010, "Packet has timed out" },
+            { 11011, "A bad request" },
+            { 11012, "A bad route" },
+            { 11013, "The TTL expired in transit" },
+            { 11014, "The TTL expired during fragment reassembly" },
+            { 11015, "a parameter problem" },
+            { 11016, "Datagrams are arriving too fast to be processed and have been discarded" },
+            { 11017, "An IP option was too big" },
+            { 11018, "a bad destination" },
+            { 11050, "A general failure. This error can be returned for some malformed ICMP packets" },
+        };
+    }
+
+    public class PingHost : IDataErrorInfo
     {
         /// <summary>
         /// Interval between ping replies in milliseconds
@@ -32,33 +65,6 @@ namespace PingData
         /// </summary>
         public string AddressOrIp { get; set; }
 
-        /// <summary>
-        /// List of status codes and definitions returns from a ping reply
-        /// </summary>
-        private Dictionary<int, string> ErrorCodes { get; } = new Dictionary<int, string>()
-        {
-            { -1, "Unknown Error" },
-            { 0, "SUCCESS" },
-            { 11001, "The reply buffer was too small." },
-            { 11002, "The destination network was unreachable" },
-            { 11003, "the destination host was unreachable" },
-            { 11004, "The destination protocol was unreachable" },
-            { 11005, "The destination port was unreachable" },
-            { 11006, "Insufficient IP resources were available" },
-            { 11007, "A bad IP Option was specified" },
-            { 11008, "A hardware error occured" },
-            { 11009, "The packet was too big" },
-            { 11010, "Packet has timed out" },
-            { 11011, "A bad request" },
-            { 11012, "A bad route" },
-            { 11013, "The TTL expired in transit" },
-            { 11014, "The TTL expired during fragment reassembly" },
-            { 11015, "a parameter problem" },
-            { 11016, "Datagrams are arriving too fast to be processed and have been discarded" },
-            { 11017, "An IP option was too big" },
-            { 11018, "a bad destination" },
-            { 11050, "A general failure. This error can be returned for some malformed ICMP packets" },
-        };
 
         /// <summary>
         /// All possible ping status results
@@ -89,6 +95,7 @@ namespace PingData
         #region Public Methods
         public async Task<PingResult> StartPingAsync()
         {
+
             Ping sender = new Ping();
 
             PingResult result = new PingResult()
@@ -96,7 +103,6 @@ namespace PingData
                 TimeStamp = DateTime.Now,
                 AddressOrIp = this.AddressOrIp
             };
-
 
             try
             {
@@ -192,19 +198,69 @@ namespace PingData
                 result.Status = Status.SUCCESS;
 
             }
-            else if (ErrorCodes.ContainsKey(result.StatusCode)) //Ping encountered an error
+            else if (PingStatus.Message.ContainsKey(result.StatusCode)) //Ping encountered an error
             {
                 result.Status = Status.ERROR;
-                result.ErrorMessage = ErrorCodes[result.StatusCode];
+                result.ErrorMessage = PingStatus.Message[result.StatusCode];
             }
             else // Ping encountered and unknown error
             {
                 result.Status = Status.ERROR;
-                result.ErrorMessage = ErrorCodes[-1];
+                result.ErrorMessage = PingStatus.Message[-1];
             }
 
             return result;
         }
         #endregion Private Methods
+
+        #region IDataErrorInfo - Validation
+
+        public string Error { get { return null; } }
+
+        /// <summary>
+        /// Contains a list of properties and its current validation error message
+        /// </summary>
+        public Dictionary<string, string> IDataErrors = new Dictionary<string, string>();
+        public string this[string propertyName]
+        {
+            get
+            {
+                string errorMessage = null;
+
+                switch (propertyName)
+                {
+                    case nameof(AddressOrIp):
+                        if (!Validator.IsValidAddress(AddressOrIp))
+                        {
+                            errorMessage = Validator.Errors["InvalidAddress"];
+                        }
+                        break;
+                }
+
+                UpdateIDataErrorList(propertyName, errorMessage);
+
+                return errorMessage;
+            }
+        }
+
+        /// <summary>
+        /// Updates the tracked error list by either adding or removing the error for the given property
+        /// </summary>
+        /// <param name="propertyName">Property name </param>
+        /// <param name="error"></param>
+        private void UpdateIDataErrorList(string propertyName, string errorMessage)
+        {
+            bool previousErrorsExist = IDataErrors.TryGetValue(propertyName, out _);
+
+
+            if (previousErrorsExist) // previous errors exist, remove them
+                IDataErrors.Remove(propertyName);
+
+            if (errorMessage != null) // new errors exist, add them
+                IDataErrors.Add(propertyName, errorMessage);
+        }
+
+        #endregion IDataErrorInfo - Validation
+
     }
 }

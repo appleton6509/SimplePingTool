@@ -15,10 +15,9 @@ namespace SimplePingTool.ModelView
 
     //TODO: Validation for user input
 
-    public class MainWindowModelView : BindableBase
+    public class MainWindowModelView : INotifyPropertyChanged
     {
-  
-        
+
         public bool IsPingNotRunning { 
             get 
             {
@@ -80,6 +79,7 @@ namespace SimplePingTool.ModelView
             "www.yahoo.com",
             "www.youtube.com",
         };
+     
 
         public MainWindowModelView()
         {
@@ -88,8 +88,8 @@ namespace SimplePingTool.ModelView
             StartPingCommand = new RelayCommand<object>(StartPing);
             StopPingCommand = new RelayCommand<object>(StopPing);
 
-            PingHost Ping = new PingHost();
-            PingStats Stats = new PingStats();
+            Ping = new PingHost();
+            Stats = new PingStats();
             PingResultsList = new ObservableCollection<PingResult>();
         }
 
@@ -98,7 +98,7 @@ namespace SimplePingTool.ModelView
         public async void StartPing(object obj = null)
         {
             //Ping is already running, return.
-            if (IsPingRunning)
+            if (IsPingRunning || Ping.IDataErrors.Count > 0)
                 return;
 
             ClearResultData();
@@ -162,5 +162,15 @@ namespace SimplePingTool.ModelView
                 LogPingResult.LogToTextFile(pingResult);
         }
         #endregion Private Methods
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChange([CallerMemberName]string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
+
     }
 }
