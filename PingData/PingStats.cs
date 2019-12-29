@@ -10,28 +10,24 @@ namespace PingData
 {
     public class PingStats : INotifyPropertyChanged
     {
-        /// <summary>
-        /// A list for populating Ping Statistics
-        /// </summary>
-        private List<PingResult> Results = new List<PingResult>();
+
+        private List<int> _successfulPings = new List<int>();
 
         /// <summary>
         /// calculated average latency
         /// </summary>
         public double AverageLatency { 
             get {
-                if (Results.Count == 0)
+                if (_successfulPings.Count == 0)
                 {
                     return 0;
                 }
 
                 else
                 {
-                    List<PingResult> successfulPings = Results.FindAll(x => x.Status == PingHost.Status.SUCCESS);
-
-                    if (successfulPings.Count > 0)    //if Successful pings are found, return average 
+                    if (_successfulPings.Count > 0)    //if Successful pings are found, return average 
                     {
-                        return Math.Round(successfulPings.Average(x => x.Latency));
+                        return Math.Round(_successfulPings.Average());
                     }
                     else        //no successful pings, return 0
                         return 0;
@@ -118,7 +114,8 @@ namespace PingData
 
             PacketsSent++;
 
-            Results.Add(result);
+            if (result.Status == PingHost.Status.SUCCESS)
+                _successfulPings.Add(result.Latency);
 
             OnPropertyChanged(nameof(AverageLatency));
         }
@@ -128,11 +125,9 @@ namespace PingData
         /// </summary>
         public void Clear()
         {
-            Results.Clear();
             PacketsLost = 0;
             PacketsSent = 0;
             MaxLatency = 0;
-
         }
 
         #region INotifyPropertyChanged

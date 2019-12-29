@@ -1,8 +1,13 @@
-﻿using PingData;
+﻿using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Definitions.Series;
+using LiveCharts.Wpf;
+using PingData;
 using SimplePingTool.Helper_Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -18,12 +23,14 @@ namespace SimplePingTool.ModelView
     public class MainWindowModelView : INotifyPropertyChanged
     {
 
-        public bool IsPingNotRunning { 
-            get 
+
+        public bool IsPingNotRunning
+        {
+            get
             {
                 return _isPingNotRunning;
-            } 
-            set 
+            }
+            set
             {
                 if (_isPingNotRunning == value)
                     return;
@@ -31,12 +38,12 @@ namespace SimplePingTool.ModelView
                 _isPingNotRunning = value;
                 IsPingRunning = !value;
                 OnPropertyChange();
-            } 
+            }
         }
-
         private bool _isPingNotRunning;
 
-        public bool IsPingRunning { 
+        public bool IsPingRunning
+        {
             get
             {
                 return _isPingRunning;
@@ -55,22 +62,6 @@ namespace SimplePingTool.ModelView
 
         public bool IsLoggingEnabled { get; set; }
 
-        private enum LabelText
-        {
-            START,
-            STARTED,
-            NA,
-            SUCCESS,
-        }
-
-        public ICommand StartPingCommand { get; set; }
-        public ICommand StopPingCommand { get; set; }
-
-        public PingHost Ping { get; set; }
-
-        public ObservableCollection<PingResult> PingResultsList { get; set; } 
-
-        public PingStats Stats { get; set; }
 
         public ObservableCollection<string> AddressList { get; set; } = new ObservableCollection<string>()
         {
@@ -79,7 +70,34 @@ namespace SimplePingTool.ModelView
             "www.yahoo.com",
             "www.youtube.com",
         };
-     
+
+        #region ICommands 
+
+        public ICommand StartPingCommand { get; set; }
+        public ICommand StopPingCommand { get; set; }
+
+        #endregion ICommands
+
+        #region Model Objects
+
+        public PingHost Ping { get; set; } = new PingHost();
+
+        public ObservableCollection<PingResult> PingResultsList { get; set; } = new ObservableCollection<PingResult>();
+
+        public ChartValues<double> SuccessfulPing { get; set; } = new ChartValues<double>();
+
+        public ChartValues<double> FailedPing { get; set; } = new ChartValues<double>();
+
+
+        public PingStats Stats { get; set; } = new PingStats();
+
+        #endregion Model Objects
+
+
+        #region Chart Collections
+
+        #endregion Chart Collections
+
 
         public MainWindowModelView()
         {
@@ -88,10 +106,35 @@ namespace SimplePingTool.ModelView
             StartPingCommand = new RelayCommand<object>(StartPing);
             StopPingCommand = new RelayCommand<object>(StopPing);
 
-            Ping = new PingHost();
-            Stats = new PingStats();
-            PingResultsList = new ObservableCollection<PingResult>();
+            PingResultsList.CollectionChanged += PingResultsList_CollectionChanged;
         }
+
+        private void PingResultsList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+           if (e.Action  == NotifyCollectionChangedAction.Add)
+            {
+                var newPingResult = ((ObservableCollection<PingResult>)sender)[e.NewStartingIndex];
+
+                Stats.Add(newPingResult);
+
+                if (newPingResult.Status == PingHost.Status.SUCCESS)
+                {
+                    SuccessfulPing.Add(newPingResult.Latency);
+                    FailedPing.Add(0);
+                }
+
+                else
+                {
+                    FailedPing.Add(10);
+                    SuccessfulPing.Add(0);
+                }
+                //log to file
+                LogToFile(newPingResult);
+
+            }
+
+        }
+
 
         #region ICommand Methods
 
@@ -101,7 +144,7 @@ namespace SimplePingTool.ModelView
             if (IsPingRunning || Ping.IDataErrors.Count > 0)
                 return;
 
-            ClearResultData();
+            //ClearResults();
 
             IsPingRunning = true;
 
@@ -131,25 +174,18 @@ namespace SimplePingTool.ModelView
             //ping host and log results
             PingResult pingResult = await Ping.StartPingAsync();
 
-            //discard ping results for longer intervals if ping was manually stopped by user
             if (IsPingRunning)
-            {
-                //add results to ping result list
                 PingResultsList.Add(pingResult);
-
-                //update ping stats
-                Stats.Add(pingResult);
-
-                //log to file
-                LogToFile(pingResult);
-            }
         }
 
-        private void ClearResultData()
+
+        private void ClearResults()
         {
             //clear data
             PingResultsList.Clear();
             Stats.Clear();
+            SuccessfulPing.Clear();
+            FailedPing.Clear();
         }
 
         /// <summary>

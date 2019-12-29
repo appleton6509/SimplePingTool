@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace PingData
 {
-    public class PingResult
+    public class PingResult : INotifyPropertyChanged
     {
         /// <summary>
         /// the latency in milliseconds for the ping to complete
@@ -33,5 +35,17 @@ namespace PingData
         /// The timestamp of when the ping request was sent
         /// </summary>
         public DateTime TimeStamp { get; set; }
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Event when a property has changed
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion INotifyPropertyChanged
     }
 }

@@ -5,17 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePingTool" 
         xmlns:viewmodel="clr-namespace:SimplePingTool.ModelView" 
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="Simple Ping Tool" Height="415" MinHeight="415" MinWidth="645" Width="645" 
+        Title="Simple Ping Tool" Height="601" MinHeight="415" MinWidth="645" Width="843" 
         WindowStartupLocation="CenterScreen" Opacity="0.94">
     <Window.DataContext>
         <viewmodel:MainWindowModelView x:Name="vm"></viewmodel:MainWindowModelView>
     </Window.DataContext>
+
+    
+    
     <Border Padding="5">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="130"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <GroupBox Header="Controls" HorizontalAlignment="Left" Height="121" Margin="0,0,0,0" Padding="5" VerticalAlignment="Top" Width="416" FontWeight="Bold">
                 <Grid Margin="0,0,-0.4,-6">
@@ -54,44 +58,42 @@
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <DataGrid Grid.Row="2" x:Name="dgPingResults" ItemsSource="{Binding PingResultsList}" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center" AutoGenerateColumns="false">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Descending"/>
-                    <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Descending"/>
-                    <DataGridTextColumn Binding="{Binding Status}" IsReadOnly="True" Header="Result" Width="*" SortDirection="Descending"/>
-                    <DataGridTextColumn Binding="{Binding TimeStamp}" IsReadOnly="True" Header="Timestamp" Width="*" SortDirection="Descending"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            <GroupBox Header="Ping Stats" HorizontalAlignment="Left" Height="121" Margin="431,0,0,0" VerticalAlignment="Top" Width="188" FontWeight="Bold">
-                <Grid x:Name="grdPingStats" DataContext="{Binding Stats}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="51*"/>
-                        <ColumnDefinition Width="37*"/>
-                        <ColumnDefinition Width="88*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Max. Latency:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Margin="0,1,0,2" Height="22" Width="69"/>
-                    <Label Content="Packets Sent:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Height="24" Width="67"/>
-                    <Label Content="Packets Lost:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Height="24" Width="66"/>
-                    <Label Content="Avg. Latency:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Normal" FontSize="10" Grid.ColumnSpan="2" Margin="0,2,0,1" Height="22" Width="68">
-                        <Label.ToolTip>
-                            <ToolTip>
-                                Average latency excludes failures or timeouts
-                            </ToolTip>
-                        </Label.ToolTip>
-                    </Label>
+            <UniformGrid Margin="421,9,10,10">
+                <lvc:Gauge 
+                   From="0" To="{Binding Stats.MaxLatency}" Value="{Binding Stats.AverageLatency}"
+                   LabelsVisibility="Visible" >
+                    <lvc:Gauge.GaugeActiveFill>
+                        <LinearGradientBrush>
+                            <GradientStop Color="Orange" Offset="0.0" />
+                            <GradientStop Color="Yellow" Offset="0.5" />
+                            <GradientStop Color="Red" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </lvc:Gauge.GaugeActiveFill>
+                </lvc:Gauge>
 
-                    <Label x:Name="lbAverageLatency" Content="{Binding AverageLatency}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" FontWeight="Normal" Margin="0,0,0,1" Height="24" Width="31"  />
-                    <Label x:Name="lbPacketsSent" Content="{Binding PacketsSent}"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" FontWeight="Normal" Height="24" Width="31"/>
-                    <Label x:Name="lbPacketsLost" Content="{Binding PacketsLost}"    HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="2" FontWeight="Normal" Height="24" Width="31"/>
-                    <Label x:Name="lbMaxLatency" Content="{Binding MaxLatency}"     HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" FontWeight="Normal" Margin="0,1,0,0" Height="24" Width="31"/>
-                </Grid>
-            </GroupBox>
+            </UniformGrid>
+            <TabControl Grid.Row="2">
+                <TabItem Header="Grid">
+                    <DataGrid x:Name="dgPingResults" ItemsSource="{Binding PingResultsList}" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center" AutoGenerateColumns="false">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding Status}" IsReadOnly="True" Header="Result" Width="*" SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding TimeStamp}" IsReadOnly="True" Header="Timestamp" Width="*" SortDirection="Ascending"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem Header="Graph">
+                    <lvc:CartesianChart Zoom="X" Grid.Column="0" x:Name="Chart" LegendLocation="Top" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}" Grid.ColumnSpan="2">
+                        <lvc:CartesianChart.Series>
+                            <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
+                            </lvc:StackedAreaSeries>
+                            <lvc:StackedAreaSeries Title="Fail"  Values="{Binding FailedPing}">
+                            </lvc:StackedAreaSeries>
+                        </lvc:CartesianChart.Series>
+                    </lvc:CartesianChart>
+                </TabItem>
+            </TabControl>
 
         </Grid>
     </Border>
