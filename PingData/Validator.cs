@@ -13,12 +13,12 @@ namespace PingData
         /// <summary>
         /// A regex value for validating IP address format
         /// </summary
-        private static Regex IpAddressRegex = new Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+        private static readonly Regex IpAddressRegex = new Regex("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
         /// <summary>
         /// a regex value for validating DNS format
         /// </summary>
-        private static Regex HostNameRegex = new Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
+        private static readonly Regex HostNameRegex = new Regex("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
 
         public static readonly Dictionary<string, string> Errors = new Dictionary<string, string>()
         {
@@ -34,19 +34,13 @@ namespace PingData
         public static bool IsValidAddress(string ipOrDNS)
         {
             string address = ipOrDNS;
+
             if (address == String.Empty || address == null)
-            {
                 return false;
-            }
-            
-            if (IpAddressRegex.IsMatch(address) || HostNameRegex.IsMatch(address))
-            {
+            else if (IpAddressRegex.IsMatch(address) || HostNameRegex.IsMatch(address))
                 return true;
-            }
             else
-            {
                 return false;
-            }
         } 
     }
 }

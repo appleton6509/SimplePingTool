@@ -221,26 +221,35 @@ namespace PingData
         /// Contains a list of properties and its current validation error message
         /// </summary>
         public Dictionary<string, string> IDataErrors = new Dictionary<string, string>();
+
+
         public string this[string propertyName]
         {
             get
             {
-                string errorMessage = null;
-
-                switch (propertyName)
-                {
-                    case nameof(AddressOrIp):
-                        if (!Validator.IsValidAddress(AddressOrIp))
-                        {
-                            errorMessage = Validator.Errors["InvalidAddress"];
-                        }
-                        break;
-                }
+                string errorMessage = ValidateProperty(propertyName);
 
                 UpdateIDataErrorList(propertyName, errorMessage);
 
                 return errorMessage;
             }
+        }
+
+        private string ValidateProperty(string propertyName)
+        {
+            string errorMessage = null;
+
+            switch (propertyName)
+            {
+                case nameof(AddressOrIp):
+                    if (!Validator.IsValidAddress(AddressOrIp))
+                    {
+                        errorMessage = Validator.Errors["InvalidAddress"];
+                    }
+                    break;
+            }
+
+            return errorMessage;
         }
 
         /// <summary>

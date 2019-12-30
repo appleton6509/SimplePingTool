@@ -16,35 +16,29 @@ namespace PingData
         /// <summary>
         /// calculated average latency
         /// </summary>
-        public double AverageLatency { 
-            get {
-                if (_successfulPings.Count == 0)
-                {
+        public double AverageLatency
+        {
+            get
+            {
+                if (_successfulPings.Count.Equals(0))
                     return 0;
-                }
-
                 else
-                {
-                    if (_successfulPings.Count > 0)    //if Successful pings are found, return average 
-                    {
-                        return Math.Round(_successfulPings.Average());
-                    }
-                    else        //no successful pings, return 0
-                        return 0;
-                }
-            } 
+                    return Math.Round(_successfulPings.Average());
+            }
         }
-        
+
+
         /// <summary>
         /// Total number of packets sent within the results list 
         /// </summary>
-        public int PacketsSent { 
-            get { return _packetsSent; } 
-            set 
+        public int PacketsSent
+        {
+            get { return _packetsSent; }
+            set
             {
                 _packetsSent = value;
                 OnPropertyChanged();
-            }  
+            }
         }
         private int _packetsSent;
 
@@ -52,27 +46,29 @@ namespace PingData
         /// <summary>
         /// Max latency value found within the results list
         /// </summary>
-        public int MaxLatency { 
-            get { return _maxLatency; } 
-            set 
+        public int MaxLatency
+        {
+            get { return _maxLatency; }
+            set
             {
                 _maxLatency = value;
                 OnPropertyChanged();
-            } 
+            }
         }
         private int _maxLatency;
 
         /// <summary>
         /// Total number of packets lost within the results list
         /// </summary>
-        public int PacketsLost { 
-            get { return _packetsLost; } 
+        public int PacketsLost
+        {
+            get { return _packetsLost; }
             set
             {
                 _packetsLost = value;
                 OnPropertyChanged();
             }
-        
+
         }
         private int _packetsLost;
 
@@ -89,12 +85,12 @@ namespace PingData
         /// <param name="result"></param>
         public void Add(PingResult result)
         {
-            
+
             if (result.AddressOrIp == null)         //packet has no host, return and do nothing
                 return;
-            
-            
-            if (result.Status == PingHost.Status.SUCCESS)       
+
+
+            if (result.Status == PingHost.Status.SUCCESS)
             {
                 //On successful packet send, determine if max latency increased
                 if (result.Latency > _maxLatency)

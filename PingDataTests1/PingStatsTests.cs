@@ -56,7 +56,7 @@ namespace PingData.Tests
         }
 
         [TestMethod()]
-        public void Add_ResultIsSuccessful()
+        public void Add_ResultStatusSuccess()
         {
             //Assign
             PingStats stats = new PingStats();
@@ -76,8 +76,9 @@ namespace PingData.Tests
             //assert
             Assert.AreEqual(expectedResult, actualResult);
         }
+
         [TestMethod()]
-        public void Add_ResultIsFailure()
+        public void Add_ResultStatusFailure()
         {
             //Assign
             PingStats stats = new PingStats();
@@ -99,7 +100,7 @@ namespace PingData.Tests
         }
 
         [TestMethod()]
-        public void Add_ResultIsFailureAndSuccess()
+        public void Add_ResultStatusFailureAndSuccess()
         {
             //Assign
             PingStats stats = new PingStats();
@@ -122,6 +123,58 @@ namespace PingData.Tests
             stats.Add(result);
             stats.Add(result2);
             actualResult = (stats.MaxLatency == 5 && stats.PacketsLost == 1 && stats.PacketsSent == 2 && stats.AverageLatency == 5);
+
+            //assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void AverageLatency_PingCountIsZero()
+        {
+            //Assign
+            PingStats stats = new PingStats();
+            double expectedResult = 0;
+            double actualResult;
+
+            //act
+            actualResult = stats.AverageLatency;
+
+            //assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod()]
+        public void AverageLatency_PingCountIsThree()
+        {
+            //Assign
+            PingStats stats = new PingStats();
+            PingResult result1 = new PingResult()
+            {
+                AddressOrIp = "www.google.com",
+                Latency = 0,
+                Status = PingHost.Status.SUCCESS,
+            };
+            PingResult result2 = new PingResult()
+            {
+                AddressOrIp = "www.google.com",
+                Latency = 50,
+                Status = PingHost.Status.SUCCESS,
+            };
+            PingResult result3 = new PingResult()
+            {
+                AddressOrIp = "www.google.com",
+                Latency = 100,
+                Status = PingHost.Status.SUCCESS,
+            };
+
+            double expectedResult = 50;
+            double actualResult;
+
+            //act
+            stats.Add(result1);
+            stats.Add(result2);
+            stats.Add(result3);
+            actualResult = stats.AverageLatency;
 
             //assert
             Assert.AreEqual(expectedResult, actualResult);
