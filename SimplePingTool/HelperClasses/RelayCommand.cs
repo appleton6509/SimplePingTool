@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SimplePingTool.Helper_Classes
+namespace SimplePingTool.HelperClasses
 {
     public class RelayCommand<T> : ICommand
     {

@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Threading.Tasks;
 using PingData;
 using System.Collections.ObjectModel;
-using SimplePingTool.ModelView;
 
 namespace SimplePingTool
 {

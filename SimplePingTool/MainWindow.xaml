@@ -4,144 +4,100 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePingTool" 
-        xmlns:viewmodel="clr-namespace:SimplePingTool.ModelView" 
-        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
+        xmlns:viewmodel="clr-namespace:SimplePingTool.ViewModel" 
+        xmlns:view="clr-namespace:SimplePingTool.View"  
         mc:Ignorable="d"
-        Title="Simple Ping Tool" Height="473" MinHeight="415" MinWidth="645" Width="669" 
-        WindowStartupLocation="CenterScreen" Opacity="0.94">
-    
-    <!--#region VIEWMODEL-->
-    <Window.DataContext>
-        <viewmodel:MainWindowModelView x:Name="vm"></viewmodel:MainWindowModelView>
-    </Window.DataContext>
-    <!--#endregion-->
+        Title="Simple Ping Tool" 
+        SizeToContent="WidthAndHeight"
+        MinWidth="705" MinHeight="495"
+        WindowStartupLocation="CenterScreen" Opacity="0.94" 
+        WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip"
+        Background="{StaticResource BackgroundGrey}">
 
-    <Border Padding="5">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="130"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <GroupBox Header="Controls" HorizontalAlignment="Left" Height="121" Padding="5" VerticalAlignment="Top" Width="416" FontWeight="Bold">
-                <Grid >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="94*"/>
-                        <ColumnDefinition Width="204*"/>
-                        <ColumnDefinition Width="94*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="15*"/>
-                        <RowDefinition Height="14*"/>
-                        <RowDefinition Height="15*"/>
-                    </Grid.RowDefinitions>
-                    
-                    <!--#region BUTTONS -->
-                    <Button x:Name="btnStartPing" 
-                            Command="{Binding StartPingCommand}" 
-                            IsEnabled="{Binding IsPingNotRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Start" Width="75" Height="25" Margin="10,2,9.4,2.6" />
-                    <Button x:Name="btnStopPing" 
-                            Command="{Binding StopPingCommand}" 
-                            IsEnabled="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="Stop" Width="75" Height="24" Margin="10,3,10,0" />
-                    <TextBox x:Name="tbAddressOrIp" 
-                             Text="{Binding Ping.AddressOrIp, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" 
-                             IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
-                             Grid.Row="0"  VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Width="204" Height="25" VerticalContentAlignment="Center" Padding="5,0,0,0" FontWeight="Normal" Margin="94,2,0.4,2.6" Grid.ColumnSpan="2" >
-                             <TextBox.ToolTip>
-                            <ToolTip>
-                                Enter an IP Address or Domain Name such as:    8.8.8.8  or  google.com
-                            </ToolTip>
-                        </TextBox.ToolTip>
-                    </TextBox>
-                    <!--#endregion-->
+    <Window.Resources>
 
-                    <!--#region COMBOBOX -->
-                    <ComboBox x:Name="cbAddressOrIp" 
-                              ItemsSource="{Binding AddressList}" 
-                              SelectedItem="{Binding ElementName=tbAddressOrIp, Path=Text, Mode=OneWayToSource}" 
-                              IsEnabled="{Binding IsPingNotRunning}" 
-                              Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" Padding="7,0,0,0" Width="204" Height="24" FontWeight="Normal" Margin="94,2.4,0.4,2.4" Grid.ColumnSpan="2" />
-                    <!--#endregion-->
+        <!--#region DATA_TEMPLATE_VIEWMODELS-->
+        <DataTemplate DataType="{x:Type viewmodel:PingViewModel}">
+            <view:PingView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodel:PortScannerViewModel}">
+            <view:PortScannerView/>
+        </DataTemplate>
+        <!--#endregion-->
 
-                    <!--#region ENABLE LOGS -->
-                    <Label Content="Enable Logs" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="10" Height="25" Margin="0,3.6,196.2,1" Width="82" Grid.ColumnSpan="2">
-                        <Label.ToolTip>
-                            <ToolTip>
-                                Logs are stored in same directory as this application.
-                            </ToolTip>
-                        </Label.ToolTip>
-                    </Label>
-                    <CheckBox x:Name="chbEnableLogging" 
-                              IsChecked="{Binding IsLoggingEnabled}" 
-                              Content="" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="9,8.6,0,6" Height="15" Width="20"/>
-                    <!--#endregion-->
+        <!--#region BUTTON STYLES-->
 
-                    <!--#region SLIDER -->
-                    <Slider x:Name="slInterval" 
-                            Value="{Binding Ping.IntervalBetweenPings}" 
-                            Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="Both" Minimum="1" SmallChange="0.5"  Cursor="Hand" IsSnapToTickEnabled="True" ToolTip="Select a interval between pings from 1 - 10 seconds."/>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Label x:Name="tbIntervalValue" 
-                               Content="{Binding ElementName=slInterval, Path=Value}" 
-                               FontWeight="Normal" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="5,5,0,5"></Label>
-                        <Label FontWeight="Normal" Padding="0,5,5,5" RenderTransformOrigin="1.179,-3.526" Width="67">s interval</Label>
-                    </StackPanel>
-                    <!--#endregion-->
-                    
-                </Grid>
-            </GroupBox>
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Setter Property="Padding" Value="5,5,5,5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-            <!--#region GRAPH GAUGE -->
-            <UniformGrid Margin="421,9,10,10">
-                <lvc:Gauge 
-                    From="0" 
-                    To="{Binding Stats.MaxLatency}" 
-                    Value="{Binding Stats.AverageLatency}"
-                    
-                    LabelsVisibility="Visible" >
-                    <lvc:Gauge.GaugeActiveFill>
-                        <LinearGradientBrush>
-                            <GradientStop Color="Orange" Offset="0.0" />
-                            <GradientStop Color="Yellow" Offset="0.5" />
-                            <GradientStop Color="Red" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </lvc:Gauge.GaugeActiveFill>
-                </lvc:Gauge>
-            </UniformGrid>
-            <!--#endregion-->
+        <Style x:Key="MenuButtonTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MenuTextColor}"/>
+            <Setter Property="FontFamily" Value="OCR A Extended"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+        </Style>
 
+        <!--#endregion-->
 
-            <TabControl  Grid.Row="2">
-                <!--#region GRAPH LINE SERIES-->
-                <TabItem Header="Graph">
-                    <lvc:CartesianChart Zoom="X" Grid.Column="0" x:Name="Chart" LegendLocation="Top" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}" Grid.ColumnSpan="2">
-                        <lvc:CartesianChart.Series>
-                            <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
-                            </lvc:StackedAreaSeries>
-                            <lvc:StackedAreaSeries Title="Fail"  Values="{Binding FailedPing}">
-                            </lvc:StackedAreaSeries>
-                        </lvc:CartesianChart.Series>
-                    </lvc:CartesianChart>
-                </TabItem>
-                <!--#endregion-->
-                
-                <!--#region DATA GRID-->
-                <TabItem Header="Grid">
-                    <DataGrid x:Name="dgPingResults" ItemsSource="{Binding PingResultsList}" GridLinesVisibility="none" HorizontalContentAlignment="Center" HorizontalAlignment="Center" AutoGenerateColumns="false" Height="226" VerticalAlignment="Bottom">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding AddressOrIp}" IsReadOnly="True" Header="IP Address" Width="*" SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding Latency}" IsReadOnly="True" Header="Latency" Width="*" SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding Status}" IsReadOnly="True" Header="Result" Width="*" SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding TimeStamp}" IsReadOnly="True" Header="Timestamp" Width="*" SortDirection="Ascending"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </TabItem>
+    </Window.Resources>
 
-                <!--#endregion-->
-                
-            </TabControl>
+    <DockPanel>
 
-        </Grid>
-    </Border>
+        <!--#region MENU_BUTTONS-->
+        <StackPanel Background="{StaticResource ResourceKey=MenuBackgroundColor}" DockPanel.Dock="Left"  MinWidth="100" Width="146">
+            <TextBlock MinHeight="50"></TextBlock>
+            
+            <Button Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ChangeToPingView}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/Icons/ic_Ping.png"></Image>
+                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Ping"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ChangeToPortView}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/Icons/ic_Files.png"></Image>
+                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Port Scan"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding ChangeToProcessView}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/Icons/ic_Files.png"></Image>
+                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Processes"/>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+
+        <!--#endregion-->
+
+        <!--#region TOP BAR - EXIT,MIN,MAX-->
+        <Border DockPanel.Dock="Top" Height="30">
+            <StackPanel>
+
+            </StackPanel>
+        </Border>
+        <!--#endregion-->
+
+        <!--#region VIEW_CONTENT-->
+        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" MinWidth="550" MinHeight="425"/>
+        <!--#endregion-->
+        
+    </DockPanel>
 </Window>
