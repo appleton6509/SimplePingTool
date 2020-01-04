@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SimplePingTool.View"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
-             mc:Ignorable="d" MinHeight="425" MinWidth="550"
-             Background="{StaticResource BackgroundGrey}" d:DesignHeight="425" d:DesignWidth="550">
-    
+             mc:Ignorable="d"
+             Background="{StaticResource BackgroundGrey}" d:DesignHeight="500" d:DesignWidth="550">
+
     <UserControl.Resources>
 
     </UserControl.Resources>
-    
+
     <Grid Background="{StaticResource BackgroundGrey}">
         <Grid.RowDefinitions>
             <RowDefinition Height="107*"/>
@@ -65,19 +65,20 @@
             <!--#endregion-->
 
             <!--#region DATA GRID-->
-                <TabItem Header="Grid" Padding="15,3,15,0">
-                <Grid x:Name="dgGrid"> <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
+            <TabItem Header="Grid" Padding="15,3,15,0">
+                <Grid x:Name="dgGrid">
+                    <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
                     <DataGrid x:Name="dgPingResults" 
                           ItemsSource="{Binding PingResultsList}" 
                           Width="{Binding ElementName=dgGrid, Path=ActualWidth}"
                           GridLinesVisibility="none" AutoGenerateColumns="false" 
                           HorizontalContentAlignment="Center" HorizontalAlignment="Center" >
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding AddressOrIp}" Width="2*" IsReadOnly="True" Header="IP Address"  SortDirection="Ascending"/>
-                        <DataGridTextColumn Binding="{Binding Latency}" Width="2*" IsReadOnly="True" Header="Latency"  SortDirection="Ascending"/>
-                        <DataGridTextColumn Binding="{Binding Status}" Width="2*" IsReadOnly="True" Header="Result" SortDirection="Ascending"/>
-                        <DataGridTextColumn Binding="{Binding TimeStamp}" Width="2*" IsReadOnly="True" Header="Timestamp" SortDirection="Ascending"/>
-                    </DataGrid.Columns>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding AddressOrIp}" Width="2*" IsReadOnly="True" Header="IP Address"  SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding Latency}" Width="2*" IsReadOnly="True" Header="Latency"  SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding Status}" Width="2*" IsReadOnly="True" Header="Result" SortDirection="Ascending"/>
+                            <DataGridTextColumn Binding="{Binding TimeStamp}" Width="2*" IsReadOnly="True" Header="Timestamp" SortDirection="Ascending"/>
+                        </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
             </TabItem>
@@ -90,8 +91,10 @@
         <!--#endregion-->
 
         <!--#region CONTROLS -->
-        <WrapPanel x:Name="BottomControls" 
+        <StackPanel Orientation="Horizontal"
+                    x:Name="BottomControls" 
                    Grid.Row="2" Grid.ColumnSpan="2"
+                    Margin="5,0,5,0"
                    VerticalAlignment="Bottom">
 
             <!--#region BUTTON_START-->
@@ -168,7 +171,7 @@
             </CheckBox>
             <!--#endregion-->
 
-        </WrapPanel>
+        </StackPanel>
         <!--#endregion-->
 
     </Grid>

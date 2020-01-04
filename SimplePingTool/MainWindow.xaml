@@ -8,12 +8,11 @@
         xmlns:view="clr-namespace:SimplePingTool.View"  
         mc:Ignorable="d"
         Title="Simple Ping Tool" 
-        SizeToContent="WidthAndHeight"
-        MinWidth="705" MinHeight="495"
+        MinWidth="680" MinHeight="500"
+        Width="680" Height="500"
         WindowStartupLocation="CenterScreen" Opacity="0.94" 
         WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip"
         Background="{StaticResource BackgroundGrey}">
-
     <Window.Resources>
 
         <!--#region DATA_TEMPLATE_VIEWMODELS-->
@@ -22,6 +21,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodel:PortScannerViewModel}">
             <view:PortScannerView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodel:MemoryViewModel}">
+            <view:ProcessView/>
         </DataTemplate>
         <!--#endregion-->
 
@@ -56,7 +58,7 @@
     <DockPanel>
 
         <!--#region MENU_BUTTONS-->
-        <StackPanel Background="{StaticResource ResourceKey=MenuBackgroundColor}" DockPanel.Dock="Left"  MinWidth="100" Width="146">
+        <StackPanel Background="{StaticResource ResourceKey=MenuBackgroundColor}" DockPanel.Dock="Left"  MinWidth="120" Width="120">
             <TextBlock MinHeight="50"></TextBlock>
             
             <Button Style="{StaticResource MenuButtonStyle}"
@@ -71,15 +73,15 @@
                     Command="{Binding ChangeToPortView}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Images/Icons/ic_Files.png"></Image>
-                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Port Scan"/>
+                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Ports"/>
                 </StackPanel>
             </Button>
 
             <Button Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding ChangeToProcessView}">
+                    Command="{Binding ChangeToMemoryView}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Images/Icons/ic_Files.png"></Image>
-                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Processes"/>
+                    <TextBlock Style="{StaticResource MenuButtonTextStyle}" Text="Memory"/>
                 </StackPanel>
             </Button>
 
@@ -96,7 +98,7 @@
         <!--#endregion-->
 
         <!--#region VIEW_CONTENT-->
-        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" MinWidth="550" MinHeight="425"/>
+        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" />
         <!--#endregion-->
         
     </DockPanel>

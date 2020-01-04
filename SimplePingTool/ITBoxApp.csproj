@@ -100,9 +100,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\MemoryToPercentConverter.cs" />
+    <Compile Include="Converters\MemoryToWidthConverter.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\PingViewModel.cs" />
-    <Compile Include="ViewModel\ProcessViewModel.cs" />
+    <Compile Include="ViewModel\MemoryViewModel.cs" />
     <Compile Include="ViewModel\PortScannerViewModel.cs" />
     <Compile Include="View\PingView.xaml.cs">
       <DependentUpon>PingView.xaml</DependentUpon>
@@ -110,8 +112,8 @@
     <Compile Include="View\PortScannerView.xaml.cs">
       <DependentUpon>PortScannerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ProcessView.xaml.cs">
-      <DependentUpon>ProcessView.xaml</DependentUpon>
+    <Compile Include="View\MemoryView.xaml.cs">
+      <DependentUpon>MemoryView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -134,7 +136,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ProcessView.xaml">
+    <Page Include="View\MemoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,9 +195,17 @@
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MemoryData\MemoryData.csproj">
+      <Project>{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}</Project>
+      <Name>MemoryData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PingData\PingData.csproj">
       <Project>{ae611e47-9d75-4872-a819-a2659be9caf8}</Project>
       <Name>PingData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WindowsProcess\WindowsProcess.csproj">
+      <Project>{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}</Project>
+      <Name>WindowsProcess</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

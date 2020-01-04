@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="SimplePingTool.View.ProcessView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SimplePingTool.View"
+             xmlns:converter="clr-namespace:SimplePingTool.Converters"
+             xmlns:vm="clr-namespace:SimplePingTool.ViewModel"
+             mc:Ignorable="d"
+             Background="{StaticResource BackgroundGrey}" 
+             d:DesignHeight="500" d:DesignWidth="550">
+    <UserControl.Resources>
+        <converter:MemoryToWidthConverter x:Key="MemoryToWidthConverter"/>
+        <converter:MemoryToPercentConverter x:Key="MemoryToPercentConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="5,5,5,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0">This is only a text block</TextBlock>
+        <ListBox ItemsSource="{Binding AllProcesses}" x:Name="listBox"  
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 Grid.IsSharedSizeScope="True" Grid.Row="1" 
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 BorderThickness="0" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="A"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource MemoryToPercentConverter}">
+                                            <Binding Path="Memory"/>
+                                            <Binding Path="TotalMemory"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+                            <Rectangle Margin="5,0,0,0">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="Thistle" Offset="0.0" />
+                                        <GradientStop Color="Crimson" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                                <Rectangle.Width>
+                                    <MultiBinding Converter="{StaticResource MemoryToWidthConverter}">
+                                        <Binding Path="Memory"/>
+                                        <Binding Path="TotalMemory"/>
+                                        <Binding ElementName="listBox"/>
+                                    </MultiBinding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+
+</UserControl>

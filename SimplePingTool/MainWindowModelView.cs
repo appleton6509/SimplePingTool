@@ -51,7 +51,7 @@ namespace SimplePingTool
         /// <summary>
         /// ICommand for changing to Process Scan View
         /// </summary>
-        public ICommand ChangeToProcessView { get; set; }
+        public ICommand ChangeToMemoryView { get; set; }
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace SimplePingTool
             {
                 {nameof(PingViewModel), new PingViewModel()},
                 {nameof(PortScannerViewModel), new PortScannerViewModel()},
-                {nameof(ProcessViewModel), new ProcessViewModel()},
+                {nameof(MemoryViewModel), new MemoryViewModel()},
             };
 
         #endregion
@@ -76,7 +76,7 @@ namespace SimplePingTool
 
             ChangeToPingView = new RelayCommand<object>(GoToPingView);
             ChangeToPortView = new RelayCommand<object>(GoToPortView);
-            ChangeToProcessView = new RelayCommand<object>(GoToProcessView);
+            ChangeToMemoryView = new RelayCommand<object>(GoToMemoryView);
         }
 
         #region Private Methods
@@ -104,9 +104,11 @@ namespace SimplePingTool
         /// Change to the Port Scan view model
         /// </summary>
         /// <param name="none"></param>
-        private void GoToProcessView(object none = null)
+        private void GoToMemoryView(object none = null)
         {
-            ViewModelsList.TryGetValue(nameof(ProcessViewModel), out BaseViewModel view);
+
+            
+            ViewModelsList.TryGetValue(nameof(MemoryViewModel), out BaseViewModel view);
             CurrentViewModel = view;
         }
 
