@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace SimplePingTool.Converters
+namespace ITBox.Converters
 {
     public class MemoryToWidthConverter : IMultiValueConverter
     {

@@ -9,11 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingData", "PingData\PingDa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingDataTests", "PingDataTests1\PingDataTests.csproj", "{ED7B3929-F834-4A2E-B831-FF44F096F865}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsProcess", "WindowsProcess\WindowsProcess.csproj", "{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsProcessTests", "WindowsProcessTests\WindowsProcessTests.csproj", "{0F13D1FB-3EBE-4DE4-9869-56528BC57551}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryData", "MemoryData\MemoryData.csproj", "{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryDataTests", "MemoryDataTests\MemoryDataTests.csproj", "{23BF9FE0-60EB-4717-83E3-D734060A67E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,18 +31,14 @@ Global
 		{ED7B3929-F834-4A2E-B831-FF44F096F865}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED7B3929-F834-4A2E-B831-FF44F096F865}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED7B3929-F834-4A2E-B831-FF44F096F865}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DACF0A0-D3BD-47F4-B54D-780E97FDCFAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F13D1FB-3EBE-4DE4-9869-56528BC57551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F13D1FB-3EBE-4DE4-9869-56528BC57551}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F13D1FB-3EBE-4DE4-9869-56528BC57551}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F13D1FB-3EBE-4DE4-9869-56528BC57551}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23BF9FE0-60EB-4717-83E3-D734060A67E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23BF9FE0-60EB-4717-83E3-D734060A67E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23BF9FE0-60EB-4717-83E3-D734060A67E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23BF9FE0-60EB-4717-83E3-D734060A67E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

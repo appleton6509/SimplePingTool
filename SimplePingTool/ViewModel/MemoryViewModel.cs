@@ -1,46 +1,113 @@
-﻿using MemoryData;
+﻿using ITBox.Converters;
+using ITBox.HelperClasses;
+using MemoryData;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
-using WindowsProcess;
 
-namespace SimplePingTool.ViewModel
+namespace ITBox.ViewModel
 {
     public class MemoryViewModel : BaseViewModel
     {
+        #region Private Properties 
 
-        public ObservableCollection<MinimalProcess> AllProcesses { get; set; }
+        private ObservableCollection<ProcessMemory> _allProcessMemoryUsage;
+        private ProcessMemory _selectedProcess;
+
+        #endregion Private Properties
+
+        #region Public Properties
+
+        /// <summary>
+        /// A collection of currently running processes
+        /// </summary>
+        public ObservableCollection<ProcessMemory> AllProcessMemoryUsage
+        {
+            get
+            {
+                return _allProcessMemoryUsage;
+            }
+            set
+            {
+                _allProcessMemoryUsage = value;
+                RaisePropertyChange(nameof(TotalMemoryInUse));
+
+            }
+        }
+
+        public Func<double, string> Formatter { get; set; } = value =>
+        {
+            MemorySizeByteConverter size = new MemorySizeByteConverter();
+            var converted = size.Convert(value, null, null, CultureInfo.CurrentCulture);
+            return converted.ToString();
+        };
+
+        /// <summary>
+        /// Total working(physical) memory currently in use, in bytes.
+        /// </summary>
+        public double TotalMemoryInUse
+        {
+            get
+            {
+                return AllProcessMemoryUsage.Sum(x => x.Memory);
+            }
+
+        }
+ 
+
+        /// <summary>
+        /// a process currently selected
+        /// </summary>
+        public ProcessMemory SelectedProcess
+        {
+            get { return _selectedProcess; }
+            set
+            {
+                //if new selected process is null, do nothing and return
+                if (value == null)
+                    return;
+                _selectedProcess = value;
+                RaisePropertyChange();
+            }
+        }
+
+        #endregion Public Properties
 
         public MemoryViewModel()
         {
 
-            //create list
-            AllProcesses = ProcessHandler.CreateCombinedProcessList(Process.GetProcesses());
-
-            //sort list
-            SortProcesses.ProcessArrayQuickSort(AllProcesses);
+            AllProcessMemoryUsage = new ObservableCollection<ProcessMemory>();
 
 
-
-            System.Threading.Tasks.Task.Run(() =>
+            Task.Run(() =>
             {
                 while (true)
                 {
-                    System.Threading.Thread.Sleep(1000);
 
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.DataBind, new Action(UpdateList));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.DataBind, new Action(UpdateProcessCollection));
+
+                    System.Threading.Thread.Sleep(1000);
                 }
             });
         }
 
-        private void UpdateList()
+
+        /// <summary>
+        /// Updates a collection of processes with the most current processes.
+        /// </summary>
+        private void UpdateProcessCollection()
         {
-            ProcessHandler.UpdateProcessList(AllProcesses, Process.GetProcesses());
+            ProcessHandler.UpdateProcessList(AllProcessMemoryUsage);
+            ProcessHandler.QuickSort(AllProcessMemoryUsage);
+
         }
 
     }

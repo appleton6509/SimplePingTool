@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplePingTool.ViewModel
+namespace ITBox.ViewModel
 {
-    public class PortScannerViewModel : BaseViewModel
+    public class PortViewModel : BaseViewModel
     {
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -9,84 +10,171 @@ namespace MemoryData
 {
     public static class ProcessHandler
     {
-        internal class MinimalProcessComparer : IEqualityComparer<MinimalProcess>
-        {
-            public bool Equals(MinimalProcess x, MinimalProcess y)
-            {
-                if (string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-
-                else
-                {
-                    return false;
-                }
-
-            }
-
-            public int GetHashCode(MinimalProcess obj)
-            {
-                return obj.Name.GetHashCode();
-            }
-        }
 
         /// <summary>
-        /// Updates a list of processes with the current list of processes, updated and removing where necessary
+        /// Updates a list of processes with the current list of processes.
         /// </summary>
         /// <param name="listToUpdate">The list that will be updated</param>
-        public static void UpdateProcessList(ObservableCollection<MinimalProcess> listToUpdate, Process[] updatedList)
+        public static void UpdateProcessList(ObservableCollection<ProcessMemory> listToUpdate)
         {
-            ObservableCollection<MinimalProcess> comparableList = CreateCombinedProcessList(updatedList);
 
-            SortProcesses.ProcessArrayQuickSort(comparableList);
+            Hashtable comparableList = CreateCombinedProcessList();
 
-            listToUpdate.Clear();
+            if (listToUpdate != null)
+            {
+                for (int i = 0; i < listToUpdate.Count; i++)
+                {
+                    if (comparableList.ContainsKey(listToUpdate[i].Name))
+                    {
+                        //update existing process list
+                        (comparableList[listToUpdate[i].Name] as ProcessMemory).CopyTo(listToUpdate[i]);
 
-            foreach (MinimalProcess process in comparableList)
-                listToUpdate.Add(process);
+                        //remove from compare process list
+                        comparableList.Remove(listToUpdate[i].Name);
+                    }
+                    else
+                    {
+                        //remove from existing process list
+                        listToUpdate.Remove(listToUpdate[i]);
+                    }
+                }
+            }
 
+            //Add new processes to the list
+            foreach (DictionaryEntry process in comparableList)
+            {
+                listToUpdate.Add((process.Value as ProcessMemory));
+            }
         }
+
         /// <summary>
         /// Creates a list of processes, with each process contained in list once, combining memory totals of additional process instances
         /// </summary>
-        /// <returns></returns>
-        public static ObservableCollection<MinimalProcess> CreateCombinedProcessList(Process[] processes)
+        /// <returns>A Hashtable of MinimalProcess Objects</returns>
+        internal static Hashtable CreateCombinedProcessList(Process[] processes = null)
         {
+            //processes not provided, create them.
+            if (processes == null)
+                processes = Process.GetProcesses();
 
-            double TotalMemoryUsed = processes.Sum(x => x.WorkingSet64);
+            Hashtable table = new Hashtable();
 
-            Dictionary<string, MinimalProcess> dict = new Dictionary<string, MinimalProcess>();
-
-
+            //
             foreach (Process process in processes)
             {
-                string key = process.ProcessName;
-                double memory = (double)process.WorkingSet64;
+                //process is null, skip it
+                if (process == null)
+                    continue;
 
-                if (dict.ContainsKey(key))
+                string key = process.ProcessName;
+
+                if (table.ContainsKey(key))
                 {
-                    dict[key].Memory += memory;
+                    CombineProcessWithMinimalProcess((ProcessMemory)table[key], process);
                 }
                 else
                 {
-                    dict.Add(key, new MinimalProcess(key, memory, TotalMemoryUsed));
+                    table.Add(key, ConvertProcessToMinimalProcess(process));
                 }
             }
 
-            return new ObservableCollection<MinimalProcess>(dict.Values);
+            return table;
         }
-        public static MinimalProcess ConvertToMinimalProcess(Process process, double totalMemory)
+
+        /// <summary>
+        /// Converts a process class object into a minimal process object
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public static ProcessMemory ConvertProcessToMinimalProcess(Process process, ProcessMemory minProcess = null)
         {
-            MinimalProcess newProcess = new MinimalProcess()
-            {
-                Name = process.ProcessName,
-                Memory = process.WorkingSet64,
-                TotalMemory = totalMemory
-            };
+            if (minProcess == null)
+                minProcess = new ProcessMemory();
 
-            return newProcess;
+            minProcess.Memory = (double)process.WorkingSet64;
+            minProcess.Name = process.ProcessName;
+            minProcess.NonpagedSystemMemorySize64 = (double)process.NonpagedSystemMemorySize64;
+            minProcess.PagedMemorySize64 = (double)process.PagedMemorySize64;
+            minProcess.PagedSystemMemorySize64 = (double)process.PagedSystemMemorySize64;
+            minProcess.PrivateMemorySize64 = (double)process.PrivateMemorySize64;
+            minProcess.VirtualMemorySize64 = (double)process.VirtualMemorySize64;
+            minProcess.PeakPagedMemorySize64 = (double)process.PeakPagedMemorySize64;
+            minProcess.PeakVirtualMemorySize64 = (double)process.PeakVirtualMemorySize64;
+            minProcess.PeakWorkingSet64 = (double)process.PeakWorkingSet64;
+            minProcess.Id = process.Id.ToString();
+
+            return minProcess;
         }
 
+        /// <summary>
+        /// Convert processes of the same name into a single minimal process
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public static void CombineProcessWithMinimalProcess(ProcessMemory minProcess, Process process)
+        {
+            minProcess.Memory += (double)process.WorkingSet64;
+            minProcess.NonpagedSystemMemorySize64 += (double)process.NonpagedSystemMemorySize64;
+            minProcess.PagedMemorySize64 += (double)process.PagedMemorySize64;
+            minProcess.PagedSystemMemorySize64 += (double)process.PagedSystemMemorySize64;
+            minProcess.PrivateMemorySize64 += (double)process.PrivateMemorySize64;
+            minProcess.VirtualMemorySize64 += (double)process.VirtualMemorySize64;
+            minProcess.Id += "," + process.Id.ToString();
+
+        }
+
+        #region Quick Sort Algorithm
+
+        private static void exchange(ObservableCollection<ProcessMemory> data, int m, int n)
+        {
+            ProcessMemory temporary;
+
+            temporary = data[m];
+            data[m] = data[n];
+            data[n] = temporary;
+        }
+
+        private static void QuickSort(ObservableCollection<ProcessMemory> data, int l, int r)
+        {
+            int i, j;
+            double x;
+
+            i = l;
+            j = r;
+
+
+            x = data[(l + r) / 2].Memory; /* find pivot item */
+            while (true)
+            {
+                while (data[i].Memory > x)
+                    i++;
+                while (x > data[j].Memory)
+                    j--;
+                if (i <= j)
+                {
+                    exchange(data, i, j);
+                    i++;
+                    j--;
+                }
+                if (i > j)
+                    break;
+            }
+            if (l < j)
+                QuickSort(data, l, j);
+            if (i < r)
+                QuickSort(data, i, r);
+        }
+
+
+        /// <summary>
+        /// Sorts a collection of processes in ascending order using the Quick Sort Algorithm
+        /// </summary>
+        /// <param name="data">collection of MinimalProcess objects</param>
+        public static void QuickSort(ObservableCollection<ProcessMemory> data)
+        {
+            QuickSort(data, 0, data.Count - 1);
+        }
+
+        #endregion
     }
 }

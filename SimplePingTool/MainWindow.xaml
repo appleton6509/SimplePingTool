@@ -1,11 +1,11 @@
-﻿<Window x:Class="SimplePingTool.MainWindow"
+﻿<Window x:Class="ITBox.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimplePingTool" 
-        xmlns:viewmodel="clr-namespace:SimplePingTool.ViewModel" 
-        xmlns:view="clr-namespace:SimplePingTool.View"  
+        xmlns:local="clr-namespace:ITBox" 
+        xmlns:viewmodel="clr-namespace:ITBox.ViewModel" 
+        xmlns:view="clr-namespace:ITBox.View"  
         mc:Ignorable="d"
         Title="Simple Ping Tool" 
         MinWidth="680" MinHeight="500"
@@ -19,7 +19,7 @@
         <DataTemplate DataType="{x:Type viewmodel:PingViewModel}">
             <view:PingView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodel:PortScannerViewModel}">
+        <DataTemplate DataType="{x:Type viewmodel:PortViewModel}">
             <view:PortScannerView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewmodel:MemoryViewModel}">

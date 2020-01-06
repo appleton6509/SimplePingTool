@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace SimplePingTool.Converters
+namespace ITBox.Converters
 {
     public class MemoryToPercentConverter : IMultiValueConverter
     {
@@ -27,7 +27,7 @@ namespace SimplePingTool.Converters
 
         private double ConvertToPercentage(double valueToConvert, double total)
         {
-            return (valueToConvert / total) * 100;
+            return valueToConvert / total * 100;
         }
     }
 }

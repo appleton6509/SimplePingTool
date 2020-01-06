@@ -1,6 +1,6 @@
 ﻿using PingData;
-using SimplePingTool.HelperClasses;
-using SimplePingTool.ViewModel;
+using ITBox.HelperClasses;
+using ITBox.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SimplePingTool
+namespace ITBox
 {
 
     //TODO: Validation for user input
@@ -63,7 +63,7 @@ namespace SimplePingTool
         private readonly Dictionary<string, BaseViewModel> ViewModelsList = new Dictionary<string, BaseViewModel>()
             {
                 {nameof(PingViewModel), new PingViewModel()},
-                {nameof(PortScannerViewModel), new PortScannerViewModel()},
+                {nameof(PortViewModel), new PortViewModel()},
                 {nameof(MemoryViewModel), new MemoryViewModel()},
             };
 
@@ -97,7 +97,7 @@ namespace SimplePingTool
         /// <param name="none"></param>
         private void GoToPortView(object none = null)
         {
-            ViewModelsList.TryGetValue(nameof(PortScannerViewModel), out BaseViewModel view);
+            ViewModelsList.TryGetValue(nameof(PortViewModel), out BaseViewModel view);
             CurrentViewModel = view;
         }
         /// <summary>

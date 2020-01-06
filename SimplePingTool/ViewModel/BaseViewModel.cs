@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplePingTool.ViewModel
+namespace ITBox.ViewModel
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
