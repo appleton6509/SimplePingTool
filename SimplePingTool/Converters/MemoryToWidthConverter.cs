@@ -17,8 +17,11 @@ namespace ITBox.Converters
         {
             if (value[0] is double && value[1] is double && value[2] is ListBox)
             {
-                var test = ConvertToPercentage((double)value[0], (double)value[1]) * ((ListBox)value[2]).ActualWidth;
-                return test;
+                var decimalPercentage = ConvertToPercentage((double)value[0], (double)value[1]);
+                var containerWidth = ((ListBox)value[2]).ActualWidth;
+
+                return decimalPercentage * containerWidth;
+
             }
 
             else

@@ -25,9 +25,10 @@ namespace ITBox.Converters
             throw new Exception("not defined");
         }
 
-        private double ConvertToPercentage(double valueToConvert, double total)
+        private double ConvertToPercentage(double valueToConvert, double totalMemoryInUse)
         {
-            return valueToConvert / total * 100;
+            double percentage = (valueToConvert / totalMemoryInUse) * 100;
+            return percentage;
         }
     }
 }

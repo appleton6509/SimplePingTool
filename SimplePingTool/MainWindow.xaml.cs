@@ -21,5 +21,15 @@ namespace ITBox
           
 
         }
+
+        /// <summary>
+        /// Event which controls the movement of the window when the title bar is pressed and held down
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void gdTitleBar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
     }
 }

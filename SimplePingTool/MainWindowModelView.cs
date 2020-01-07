@@ -43,6 +43,11 @@ namespace ITBox
         public ICommand ChangeToPingView { get; set; }
 
         /// <summary>
+        /// Close the application
+        /// </summary>
+        public ICommand Close { get; set; }
+
+        /// <summary>
         /// ICommand for changing to Port Scan View
         /// </summary>
         public ICommand ChangeToPortView { get; set; }
@@ -77,6 +82,8 @@ namespace ITBox
             ChangeToPingView = new RelayCommand<object>(GoToPingView);
             ChangeToPortView = new RelayCommand<object>(GoToPortView);
             ChangeToMemoryView = new RelayCommand<object>(GoToMemoryView);
+            Close = new RelayCommand<object>((CloseCommand));
+
         }
 
         #region Private Methods
@@ -100,6 +107,7 @@ namespace ITBox
             ViewModelsList.TryGetValue(nameof(PortViewModel), out BaseViewModel view);
             CurrentViewModel = view;
         }
+
         /// <summary>
         /// Change to the Port Scan view model
         /// </summary>
@@ -112,7 +120,14 @@ namespace ITBox
             CurrentViewModel = view;
         }
 
-
+        /// <summary>
+        /// Close the application
+        /// </summary>
+        /// <param name="none"></param>
+        private void CloseCommand(object none = null)
+        {
+            App.Current.Shutdown();
+        }
 
         #endregion
     }

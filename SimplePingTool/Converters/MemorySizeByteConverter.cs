@@ -53,7 +53,7 @@ namespace ITBox.Converters
             //All larger values show in Gigabyte
             else
             {
-                convertedValue = Math.Round(((inputValue / 1024) / 1024) / 1024, 2);
+                convertedValue = Math.Round((((inputValue / 1024) / 1024) / 1024), 2);
                 label = " GB's";
             }
 

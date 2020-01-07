@@ -67,6 +67,37 @@ namespace ITBox.ViewModel
         public bool IsLoggingEnabled { get; set; }
 
         /// <summary>
+        /// Returns the success rate(percentage) of all ping results
+        /// </summary>
+        public double SuccessfulPingRate { 
+            
+            get
+            {
+                double success = PingResultsList.Count(x => x.Status == PingHost.Status.SUCCESS);
+                double total = PingResultsList.Count;
+
+                if (total > 0 && success > 0)
+                {
+                    double result = ((success / total)*100);
+                    return Math.Round(result);
+                }
+                    
+                else
+                    return 0;
+
+            } 
+        }
+
+        /// <summary>
+        /// A Live Charts property that converts a value to calculate memory size and returns it
+        /// </summary>
+        public Func<double, string> ToPercentageFormatter { get; set; } = value =>
+        {
+            return String.Concat(value, "%");
+        };
+
+
+        /// <summary>
         /// Maintains a bindable list of default Ping locations
         /// </summary>
         public ObservableCollection<string> AddressList { get; set; } = new ObservableCollection<string>()
@@ -232,6 +263,9 @@ namespace ITBox.ViewModel
                 var newPingResult = ((ObservableCollection<PingResult>)sender)[e.NewStartingIndex];
 
                 UpdatePingResultCollections(newPingResult);
+
+                RaisePropertyChange(nameof(SuccessfulPingRate));
+
                 //log to file
                 LogToFile(newPingResult);
 

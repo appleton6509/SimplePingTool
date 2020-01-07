@@ -6,173 +6,245 @@
              xmlns:local="clr-namespace:ITBox.View"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
              mc:Ignorable="d"
-             Background="{StaticResource BackgroundGrey}" d:DesignHeight="500" d:DesignWidth="550">
+             Background="{StaticResource BackgroundGrey}" d:DesignHeight="510" d:DesignWidth="700">
 
     <UserControl.Resources>
+
 
     </UserControl.Resources>
 
     <Grid Background="{StaticResource BackgroundGrey}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="107*"/>
-            <RowDefinition Height="208*"/>
-            <RowDefinition Height="42*"/>
+            <RowDefinition Height="43*"/>
+            <RowDefinition Height="51*"/>
+
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <!--#region GRAPH GAUGE -->
-
-        <lvc:Gauge  
-            x:Name="ChartGauge"
-            Margin="8,0,8,0"
-            From="0" 
-            To="{Binding Stats.MaxLatency}" 
-            Value="{Binding Stats.AverageLatency}"
-            LabelsVisibility="Visible"
-            VerticalContentAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            Grid.Row="0" Grid.Column="1">
-            <lvc:Gauge.GaugeActiveFill>
-                <LinearGradientBrush>
-                    <GradientStop Color="Orange" Offset="0.0" />
-                    <GradientStop Color="Yellow" Offset="0.5" />
-                    <GradientStop Color="Red" Offset="1.0" />
-                </LinearGradientBrush>
-            </lvc:Gauge.GaugeActiveFill>
-        </lvc:Gauge>
-
-        <!--#endregion-->
-
-        <!--#region TAB Control-->
-        <TabControl x:Name="GraphAndGrid" Grid.Row="1" Grid.ColumnSpan="2" Margin="8,8,8,8" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-
-            <!--#region GRAPH LINE SERIES-->
-            <TabItem Header="Graph" Padding="15,3,15,0">
-                <Grid>
-                    <lvc:CartesianChart Zoom="X" x:Name="Chart" LegendLocation="Top" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
-                        <lvc:CartesianChart.Series>
-                            <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
-                            </lvc:StackedAreaSeries>
-                            <lvc:StackedAreaSeries Title="Fail"  Values="{Binding FailedPing}">
-                            </lvc:StackedAreaSeries>
-                        </lvc:CartesianChart.Series>
-                    </lvc:CartesianChart>
-                </Grid>
-            </TabItem>
-            <!--#endregion-->
-
-            <!--#region DATA GRID-->
-            <TabItem Header="Grid" Padding="15,3,15,0">
-                <Grid x:Name="dgGrid">
-                    <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
-                    <DataGrid x:Name="dgPingResults" 
-                          ItemsSource="{Binding PingResultsList}" 
-                          Width="{Binding ElementName=dgGrid, Path=ActualWidth}"
-                          GridLinesVisibility="none" AutoGenerateColumns="false" 
-                          HorizontalContentAlignment="Center" HorizontalAlignment="Center" >
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding AddressOrIp}" Width="2*" IsReadOnly="True" Header="IP Address"  SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding Latency}" Width="2*" IsReadOnly="True" Header="Latency"  SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding Status}" Width="2*" IsReadOnly="True" Header="Result" SortDirection="Ascending"/>
-                            <DataGridTextColumn Binding="{Binding TimeStamp}" Width="2*" IsReadOnly="True" Header="Timestamp" SortDirection="Ascending"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-
-
-            <!--#endregion-->
-
-        </TabControl>
-
-        <!--#endregion-->
 
         <!--#region CONTROLS -->
-        <StackPanel Orientation="Horizontal"
+
+        <Grid Grid.Row="0" Grid.Column="0" Margin="5,5,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
+
+            <TextBlock Text="Controls" Style="{DynamicResource TileHeaderStyle}"/>
+
+            <StackPanel Orientation="Vertical"
                     x:Name="BottomControls" 
                    Grid.Row="2" Grid.ColumnSpan="2"
-                    Margin="5,0,5,0"
-                   VerticalAlignment="Bottom">
+                    Margin="5,10,5,0"
+                   VerticalAlignment="Top">
 
-            <!--#region BUTTON_START-->
-            <Button x:Name="btnStartPing"
-                    Command="{Binding StartPingCommand}"
-                    Style="{DynamicResource RegularButton}"
-                    VerticalAlignment="Center"
-                    Margin="5,5,5,5"
-                    Content="Start"   />
-            <!--#endregion-->
 
-            <!--#region TEXTBOX_IP_ADDRESS_ENTRY-->
-            <TextBox x:Name="tbAddressOrIp"
-                     Text="{Binding Ping.AddressOrIp, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" 
+                <!--#region TEXTBOX_IP_ADDRESS_ENTRY-->
+
+                <TextBlock Text="Enter IP Iddress" Margin="5,0,0,0"/>
+
+                <TextBox x:Name="tbAddressOrIp"
+                     Text="{Binding Ping.AddressOrIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
                      IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
                      Margin="5,5,5,5"
                      Style="{StaticResource placeHolder}" Tag="www.google.com"
-                     MinWidth="220"
                      FontWeight="Normal"
                      VerticalAlignment="Center"
-                     FontSize="22" >
-                <TextBox.ToolTip>
-                    <ToolTip>
-                        Enter an IP Address or Domain Name such as:    8.8.8.8  or  google.com
-                    </ToolTip>
-                </TextBox.ToolTip>
-            </TextBox>
+                     FontSize="18" >
+                    <TextBox.ToolTip>
+                        <ToolTip Content="Enter an IP Address or Domain Name such as: 8.8.8.8 or google.com"/>
+                    </TextBox.ToolTip>
+                </TextBox>
+                <!--#endregion-->
 
-            <!--#endregion-->
+                <!--#region ENABLE LOGS -->
 
-            <!--#region SLIDER -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-                <Slider x:Name="slInterval" 
+                <TextBlock Text="Enable logging to file" Margin="5,0,0,0"/>
+
+                <ToggleButton Height="19.2" Width="55" 
+                              Margin="5,5,0,5"
+                              IsChecked="{Binding IsLoggingEnabled}" 
+                              Style="{DynamicResource ToggleButtonStyle}"/>
+
+                <!--#endregion-->
+
+
+
+                <!--#region SLIDER -->
+
+                <TextBlock Text="Change Intervals" Margin="5,0,0,2"/>
+
+                <StackPanel Orientation="Horizontal" >
+                    <Slider x:Name="slInterval" 
                             Value="{Binding Ping.IntervalBetweenPings}" 
                             VerticalAlignment="Center" 
-                            Margin="5"
-                            TickPlacement="Both" Minimum="1" SmallChange="0.5"  Cursor="Hand" 
+                            Margin="5,5,5,5"
+                            Minimum="1" SmallChange="0.5"  Cursor="Hand" 
                             IsSnapToTickEnabled="True" MinWidth="70">
-                    <Slider.ToolTip>
-                        Select a interval between pings from 1 - 10 seconds.
-                    </Slider.ToolTip>
-                </Slider>
-                <Label x:Name="tbIntervalValue" 
-                       Content="{Binding ElementName=slInterval, Path=Value}" 
+                        <Slider.ToolTip>Select a interval between pings from 1 - 10 seconds.</Slider.ToolTip>
+                    </Slider>
+                    <Label x:Name="tbIntervalValue" 
+                       Content="{Binding Value, ElementName=slInterval}" 
                        FontFamily="{StaticResource ButtonFont}"
                        FontWeight="Normal" 
                        Padding="0,0,0,0" 
                        VerticalAlignment="Center"/>
-                <Label FontWeight="Normal" 
+                    <Label FontWeight="Normal" 
                        VerticalAlignment="Center" 
                        Padding="0,0,0,0" 
                        FontFamily="{StaticResource ButtonFont}"
                        Content="s"/>
+                </StackPanel>
+
+                <!--#endregion-->
+
+
+
+                <!--#region BUTTON_START-->
+
+                <Grid Margin="5,5,5,5" HorizontalAlignment="Center">
+                    <Rectangle Style="{DynamicResource TileRectStyle}" Fill="{StaticResource ControlBG_Blue1_1}"/>
+                    <Button x:Name="btnStartPing"
+                            Command="{Binding StartPingCommand}"
+                            Background="Transparent"
+                            Foreground="AntiqueWhite"
+                            Padding="20,5,20,5"
+                            BorderThickness="0"
+                            Content="Ping"/>
+                </Grid>
+
+                <!--#endregion-->
+
+
             </StackPanel>
 
-            <!--#endregion-->
 
-            <!--#region ENABLE LOGS -->
-            <CheckBox x:Name="chbEnableLogging" 
-                      IsChecked="{Binding IsLoggingEnabled}" 
-                      FontFamily="Yu Gothic UI Semilight"
-                      FontWeight="Thin"
-                      FontSize="18"
-                      Content="Enable Logs" 
-                      Grid.Column="4"
-                      Margin="5"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center">
-                <CheckBox.ToolTip>
-                    <ToolTip>
-                        Logs are stored in same directory as this application.
-                    </ToolTip>
-                </CheckBox.ToolTip>
-            </CheckBox>
-            <!--#endregion-->
 
-        </StackPanel>
+        </Grid>
+
         <!--#endregion-->
+
+        <!--#region Sucess Rate GAUGE -->
+        <Grid Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
+
+            <TextBlock Text="Success Rate" Style="{DynamicResource TileHeaderStyle}"/>
+
+            <lvc:Gauge  
+                    x:Name="GaugeTest"
+                    Margin="0,0,0,10"
+                    Uses360Mode="True"
+                    HighFontSize="20"
+                    Value="{Binding SuccessfulPingRate}"
+                    VerticalAlignment="Stretch"
+                    LabelFormatter="{Binding ToPercentageFormatter}"
+                    HorizontalAlignment="Stretch"
+                    Grid.Row="1" Grid.Column="1">
+                <lvc:Gauge.GaugeActiveFill>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#FF5EFF07" Offset="0.0" />
+                        <GradientStop Color="#FF127337" Offset="1.0" />
+                    </LinearGradientBrush>
+                </lvc:Gauge.GaugeActiveFill>
+            </lvc:Gauge>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Average Ms GAUGE -->
+        <Grid Grid.Row="0" Grid.Column="2" Margin="5,5,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
+
+            <TextBlock Text="Average Milliseconds" Style="{DynamicResource TileHeaderStyle}"/>
+
+            <lvc:Gauge  
+                    x:Name="GaugeAverageMs"
+                    Margin="5,0,5,10"
+                    From="0" 
+                    To="{Binding Stats.MaxLatency}" 
+                    Value="{Binding Stats.AverageLatency}"
+                    HighFontSize="20"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    Grid.Row="1" Grid.Column="1">
+                <lvc:Gauge.GaugeActiveFill>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#FFFF0B0B" Offset="0.0" />
+                        <GradientStop Color="#FFC8291A" Offset="1.0" />
+                    </LinearGradientBrush>
+                </lvc:Gauge.GaugeActiveFill>
+            </lvc:Gauge>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region TAB Control-->
+        <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="5,5,5,5">
+
+            <Rectangle Style="{DynamicResource TileRectStyle}"/>
+
+            <TabControl x:Name="GraphAndGrid" Margin="8,8,8,8" BorderThickness="0">
+                <!--#region GRAPH LINE SERIES-->
+                <TabItem Header="Graph" Padding="5"  Style="{DynamicResource ChartTabItemStyle}" Margin="-2,-2,1.75,0">
+
+                    <Grid>
+                        <lvc:CartesianChart Zoom="X" x:Name="Chart" LegendLocation="Top" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+                            <lvc:CartesianChart.Series>
+                                <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
+                                </lvc:StackedAreaSeries>
+                                <lvc:StackedAreaSeries Title="Fail"  Values="{Binding FailedPing}">
+                                </lvc:StackedAreaSeries>
+                            </lvc:CartesianChart.Series>
+                        </lvc:CartesianChart>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Grid" Style="{DynamicResource ChartTabItemStyle}" Padding="15,3,15,0" Margin="-2,-2,1.75,0">
+                    <Grid x:Name="dgGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
+                        <DataGrid x:Name="dgPingResults"
+                                  ItemsSource="{Binding PingResultsList}" 
+                                  Width="{Binding ActualWidth, ElementName=dgGrid}"
+                                  Background="Transparent"
+                                  GridLinesVisibility="none" AutoGenerateColumns="false" 
+                                  HorizontalContentAlignment="Center" HorizontalAlignment="Center" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding AddressOrIp}" Width="2*" IsReadOnly="True" Header="IP Address"  SortDirection="Ascending"/>
+                                <DataGridTextColumn Binding="{Binding Latency}" Width="2*" IsReadOnly="True" Header="Latency"  SortDirection="Ascending"/>
+                                <DataGridTextColumn Binding="{Binding Status}" Width="2*" IsReadOnly="True" Header="Result" SortDirection="Ascending"/>
+                                <DataGridTextColumn Binding="{Binding TimeStamp}" Width="2*" IsReadOnly="True" Header="Timestamp" SortDirection="Ascending"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+                <!--#endregion-->
+
+                <!--#region DATA GRID-->
+
+
+                <!--#endregion-->
+
+            </TabControl>
+        </Grid>
+
+        <!--#endregion-->
+
+
 
     </Grid>
 

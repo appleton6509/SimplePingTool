@@ -38,12 +38,13 @@ namespace ITBox.ViewModel
             set
             {
                 _allProcessMemoryUsage = value;
-                RaisePropertyChange(nameof(TotalMemoryInUse));
-
             }
         }
 
-        public Func<double, string> Formatter { get; set; } = value =>
+        /// <summary>
+        /// A Live Charts property that converts a value to calculate memory size and returns it
+        /// </summary>
+        public Func<double, string> MemorySizeFormatter { get; set; } = value =>
         {
             MemorySizeByteConverter size = new MemorySizeByteConverter();
             var converted = size.Convert(value, null, null, CultureInfo.CurrentCulture);
@@ -57,7 +58,8 @@ namespace ITBox.ViewModel
         {
             get
             {
-                return AllProcessMemoryUsage.Sum(x => x.Memory);
+                double totalMemory = AllProcessMemoryUsage.Sum(x => x.Memory);
+                return totalMemory;
             }
 
         }
@@ -107,6 +109,7 @@ namespace ITBox.ViewModel
         {
             ProcessHandler.UpdateProcessList(AllProcessMemoryUsage);
             ProcessHandler.QuickSort(AllProcessMemoryUsage);
+            RaisePropertyChange(nameof(TotalMemoryInUse));
 
         }
 
