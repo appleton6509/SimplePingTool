@@ -30,7 +30,7 @@ namespace ITBox.ViewModel
             }
             set
             {
-                if (_isPingNotRunning == value)
+                if (_isPingNotRunning == value || Ping.IDataErrors.Count > 0)
                     return;
 
                 _isPingNotRunning = value;
@@ -38,7 +38,7 @@ namespace ITBox.ViewModel
                 RaisePropertyChange();
             }
         }
-        private bool _isPingNotRunning;
+        private bool _isPingNotRunning = true;
 
         /// <summary>
         /// Indicates if a ping is currently running
@@ -51,15 +51,17 @@ namespace ITBox.ViewModel
             }
             set
             {
-                if (_isPingRunning == value)
+                if (_isPingRunning == value || Ping.IDataErrors.Count > 0)
+                {
                     return;
-
+                }
                 _isPingRunning = value;
                 IsPingNotRunning = !value;
                 RaisePropertyChange();
+
             }
         }
-        private bool _isPingRunning;
+        private bool _isPingRunning = false;
 
         /// <summary>
         /// Indicates if logging is currently enabled
@@ -162,14 +164,11 @@ namespace ITBox.ViewModel
         /// <param name="obj"></param>
         private async void StartPing(object obj = null)
         {
-            //Ping is already running, return.
-            if (IsPingRunning
-                || Ping.IDataErrors.Count > 0)
+            if (Ping.IDataErrors.Count > 0)
+            {
+                IsPingRunning = false;
                 return;
-
-            //ClearResults();
-
-            IsPingRunning = true;
+            }
 
             while (IsPingRunning)
             {
@@ -196,7 +195,7 @@ namespace ITBox.ViewModel
             //ping host and log results
             PingResult pingResult = await Ping.StartPingAsync();
 
-            if (IsPingRunning)
+            if ((bool)IsPingRunning)
                 PingResultsList.Add(pingResult);
         }
 

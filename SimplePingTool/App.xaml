@@ -13,11 +13,13 @@
         <Brush x:Key="ControlBG_Blue1_1">#FF2195F2</Brush>
         <Color x:Key="ControlBG_Blue1">#FF2195F2</Color>
         <Color x:Key="ControlBG_Red1">#FFE53F33</Color>
+        <Brush x:Key="ControlFG_White">AntiqueWhite</Brush>
         <Brush x:Key="ControlBG_Red1_1">#FFE53F33</Brush>
         
         <!--#endregion-->
         
         <FontFamily x:Key="ButtonFont">Yu Gothic UI Semilight</FontFamily>
+
         
         <!--#region Default Font Styles -->
         
@@ -40,7 +42,7 @@
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="{StaticResource TabItem.Static.Background}"/>
             <Setter Property="Margin" Value="0,0,0,5"/>
-            <Setter Property="Padding" Value="10,2,10,0"/>
+            <Setter Property="Padding" Value="10,4,10,4"/>
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Panel.ZIndex" Value="1"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -64,7 +66,7 @@
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Fill" TargetName="mainBackground" 
                                         Value="{StaticResource TabItem.MouseOver.Background}"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Foreground" Value="{StaticResource ControlFG_White}"/>
                             </MultiDataTrigger>
 
                             <MultiDataTrigger>
@@ -72,7 +74,7 @@
                                     <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Fill" TargetName="mainBackground" Value="{StaticResource TabItem.Selected.Background}"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Foreground" Value="{StaticResource ControlFG_White}"/>
                             </MultiDataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

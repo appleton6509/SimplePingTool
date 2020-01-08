@@ -22,7 +22,7 @@ namespace ITBox.View
     {
         public PingView()
         {
-            InitializeComponent();
+             InitializeComponent();
         }
     }
 }
