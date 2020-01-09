@@ -11,8 +11,8 @@
         MinWidth="840" MinHeight="600"
         Width="840" Height="600"
         WindowStartupLocation="CenterScreen" Opacity="0.94" 
-        WindowStyle="None" ResizeMode="CanResizeWithGrip"
-        Background="{StaticResource BackgroundGrey}">
+        WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
+        Background="{StaticResource ResourceKey=MenuBackgroundColor}">
     <Window.Resources>
 
 
@@ -132,7 +132,6 @@
 
 
         </StackPanel>
-
         <!--#endregion-->
 
         <!--#region TOP BAR - EXIT,MIN,MAX-->
@@ -147,11 +146,10 @@
                         Width="30" Height="25" BorderBrush="{x:Null}" Content="X" />
             </StackPanel>
         </Grid>
-
         <!--#endregion-->
 
         <!--#region VIEW_CONTENT-->
-        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" />
+        <ContentControl x:Name="ViewContent" Content="{Binding CurrentViewModel}" DockPanel.Dock="Right"/>
         <!--#endregion-->
 
     </DockPanel>

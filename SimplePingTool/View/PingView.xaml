@@ -4,11 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ITBox.View"
+             xmlns:converter="clr-namespace:ITBox.Converters"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
              mc:Ignorable="d"
              Background="{StaticResource BackgroundGrey}" d:DesignHeight="510" d:DesignWidth="700">
 
     <UserControl.Resources>
+
+        <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <SolidColorBrush x:Key="Button.Static.Background" Color="#FF3B3434"/>
         <SolidColorBrush x:Key="Button.Static.MouseOver" Color="#FF5F5959"/>
@@ -78,9 +81,6 @@
             </Setter>
         </Style>
 
-
-
-
     </UserControl.Resources>
 
     <Grid Background="{StaticResource BackgroundGrey}">
@@ -98,7 +98,10 @@
 
         <!--#region CONTROLS -->
 
-        <Grid Grid.Row="0" Grid.Column="0" Margin="5,5,5,5">
+        <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" 
+              Visibility="{Binding ShowControlConfiguration, 
+            Converter={StaticResource BooleanToVisibilityConverter},
+            Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
@@ -106,7 +109,7 @@
             <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
 
             <TextBlock Text="Controls" Style="{DynamicResource TileHeaderStyle}"/>
-
+            
             <StackPanel Orientation="Vertical"
                     x:Name="BottomControls" 
                    Grid.Row="2" Grid.ColumnSpan="2"
@@ -178,11 +181,16 @@
                 <!--#region BUTTON_START-->
 
                 <Grid Margin="5,5,5,5" HorizontalAlignment="Center">
-                   
+
                     <ToggleButton x:Name="btnStartPing"
                                   IsChecked="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Style="{DynamicResource PingButtonStyle}"/>
+
                 </Grid>
+
+                <CheckBox Width="20" IsChecked="{Binding ShowControlConfiguration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                </CheckBox>
 
                 <!--#endregion-->
 
@@ -285,7 +293,6 @@
                         <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
                         <DataGrid x:Name="dgPingResults"
                                   ItemsSource="{Binding PingResultsList}" 
-                                  Width="{Binding ActualWidth, ElementName=dgGrid}"
                                   Background="Transparent"
                                   GridLinesVisibility="none" AutoGenerateColumns="false" 
                                   HorizontalContentAlignment="Center" HorizontalAlignment="Center" >

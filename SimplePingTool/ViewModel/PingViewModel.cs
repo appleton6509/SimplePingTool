@@ -61,7 +61,22 @@ namespace ITBox.ViewModel
 
             }
         }
+
         private bool _isPingRunning = false;
+
+        private bool _showControlConfiguration = false;
+        public bool ShowControlConfiguration
+        {
+            get
+            {
+                return _showControlConfiguration;
+            }
+            set
+            {
+                _showControlConfiguration = value;
+                RaisePropertyChange();
+            }
+        }
 
         /// <summary>
         /// Indicates if logging is currently enabled

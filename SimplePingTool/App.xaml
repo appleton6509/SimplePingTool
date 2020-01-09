@@ -155,8 +155,7 @@
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                         <Grid >
                             <ContentPresenter x:Name="contentPresenter" 
-                                              Focusable="False"
-                                              />
+                                              Focusable="False"/>
                             <Border x:Name="onBorder"
                                     CornerRadius="9" 
                                     Margin="0,0,20,0"
@@ -177,7 +176,6 @@
                         </Grid>
 
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsChecked" Value="true">
                                 <Setter Property="Background" TargetName="onBorder" Value="{StaticResource ResourceKey=ControlBG_Blue1_1}"/>
                                 <Setter Property="Panel.ZIndex" TargetName="offBorder" Value="-1"/>
