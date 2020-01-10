@@ -19,10 +19,6 @@
         <converter:MemorySizeByteConverter x:Key="MemorySizeByteConverter"/>
         <!--#endregion-->
         
-        <!--#region Styles-->
-
-        <!--#endregion-->
-        
     </UserControl.Resources>
 
     <Grid Margin="5,5,5,5">
@@ -37,7 +33,11 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <!--#endregion-->
-
+        
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5"/>
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5"/>
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="5,5,5,5" />
+        
         <!--#region Circle Gauge-->
         <Grid x:Name="gdCircleGauge"  Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
             
@@ -47,15 +47,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="3"/>
-
             <TextBlock Text="Process Usage" Style="{DynamicResource TileHeaderStyle}"/>
 
-            <lvc:Gauge From="0" 
-                       To="{Binding TotalMemoryInUse}" 
+            <lvc:Gauge  From="0" 
+                        To="{Binding TotalMemoryInUse}" 
                         Value="{Binding SelectedProcess.Memory}"
                         LabelFormatter="{Binding MemorySizeFormatter}"
-                       x:Name="lcMemoryGauge"
+                        x:Name="lcMemoryGauge"
                         Uses360Mode="True"
                         InnerRadius="0"
                         HighFontSize="30"
@@ -81,7 +79,7 @@
         <!--#region Process Details -->
         <Grid  Grid.Row="1" Grid.Column="1" Margin="5,5,5,5">
 
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
+         
             
         </Grid>
         <!--#endregion-->
@@ -92,8 +90,6 @@
                 <RowDefinition MaxHeight="30"/>
                 <RowDefinition Height="15*"/>
             </Grid.RowDefinitions>
-
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2" />
 
             <TextBlock Text="Memory Distribution" Style="{DynamicResource TileHeaderStyle}"/>
 

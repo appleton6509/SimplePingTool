@@ -61,8 +61,8 @@ namespace ITBox.ViewModel
                 double totalMemory = AllProcessMemoryUsage.Sum(x => x.Memory);
                 return totalMemory;
             }
-
         }
+
  
 
         /// <summary>
@@ -87,7 +87,6 @@ namespace ITBox.ViewModel
         {
 
             AllProcessMemoryUsage = new ObservableCollection<ProcessMemory>();
-
 
             Task.Run(() =>
             {

@@ -105,6 +105,23 @@ namespace ITBox.ViewModel
             } 
         }
 
+        /// <summary>
+        /// The selected ping interval in millisecond
+        /// </summary>
+        public int SelectedMillisecond
+        {
+            get
+            {
+                return Ping.IntervalBetweenPings;
+            }
+            set
+            {
+                if (value <= 0 || Int16.Equals(value,Ping.IntervalBetweenPings))
+                    return;
+                else
+                    Ping.IntervalBetweenPings = value;
+            }
+        }
 
         public string LogFilePath { get; set; }
 
