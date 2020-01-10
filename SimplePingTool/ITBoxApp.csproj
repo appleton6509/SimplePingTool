@@ -100,7 +100,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\MemorySizeByteConverter.cs" />
     <Compile Include="Converters\MemoryToPercentConverter.cs" />
     <Compile Include="Converters\MemoryToWidthConverter.cs" />
@@ -214,6 +214,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Icons\ic_Files.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Icons\ic_save_48px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Icons\ic_Gear.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

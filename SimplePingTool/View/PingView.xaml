@@ -8,18 +8,19 @@
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
              mc:Ignorable="d"
              Background="{StaticResource BackgroundGrey}" d:DesignHeight="510" d:DesignWidth="700">
-
+    
     <UserControl.Resources>
+        
+        <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-        <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!--#region Toggle Button(Button Style)-->
 
         <SolidColorBrush x:Key="Button.Static.Background" Color="#FF3B3434"/>
         <SolidColorBrush x:Key="Button.Static.MouseOver" Color="#FF5F5959"/>
         <SolidColorBrush x:Key="Button.Disabled.Background" Color="{StaticResource ControlBG_Red1}"/>
         <SolidColorBrush x:Key="Button.Disabled.MouseOver" Color="#FFE9776F"/>
         <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
-        
-        <Style x:Key="PingButtonStyle" TargetType="{x:Type ToggleButton}">
+        <Style x:Key="tglToggleButtonStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Foreground" Value="AntiqueWhite"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -80,10 +81,56 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--#endregion-->
+
+        <!--#region Save Icon Style -->
+        <Style x:Key="CheckBoxSaveImageStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid>
+                            <ContentControl>
+                                <Image Source="../Images/Icons/ic_save_48px.png"></Image>
+                            </ContentControl>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
+        
+        <!--#region  Gear Icon Style-->
+        <Style x:Key="CheckBoxGearImageStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid>
+                            <ContentControl>
+                                <Image Source="../Images/Icons/ic_Gear.png"></Image>
+                            </ContentControl>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
 
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource BackgroundGrey}">
+    <Grid x:Name="grdMain" Background="{StaticResource BackgroundGrey}">
+
+        <!--#region Definitions -->
         <Grid.RowDefinitions>
             <RowDefinition Height="43*"/>
             <RowDefinition Height="51*"/>
@@ -94,113 +141,157 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <!--#endregion-->
 
+        <!--#region Controls -->
+        <Grid x:Name="grdAllControls" Grid.Row="0" Grid.Column="0">
 
-        <!--#region CONTROLS -->
+            <Rectangle Style="{DynamicResource TileRectStyle}"  Margin="5,5,5,5"/>
 
-        <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" 
-              Visibility="{Binding ShowControlConfiguration, 
-            Converter={StaticResource BooleanToVisibilityConverter},
-            Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
-
-            <TextBlock Text="Controls" Style="{DynamicResource TileHeaderStyle}"/>
-            
-            <StackPanel Orientation="Vertical"
-                    x:Name="BottomControls" 
-                   Grid.Row="2" Grid.ColumnSpan="2"
-                    Margin="5,10,5,0"
-                   VerticalAlignment="Top">
-
-
-                <!--#region TEXTBOX_IP_ADDRESS_ENTRY-->
-
-                <TextBlock Text="Enter IP Iddress" Margin="5,0,0,0"/>
-
-                <TextBox x:Name="tbAddressOrIp"
-                     Text="{Binding Ping.AddressOrIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                     IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="5,5,5,5"
-                     Style="{StaticResource placeHolder}" Tag="www.google.com"
-                     FontWeight="Normal"
-                     VerticalAlignment="Center"
-                     FontSize="18" >
-                    <TextBox.ToolTip>
-                        <ToolTip Content="Enter an IP Address or Domain Name such as: 8.8.8.8 or google.com"/>
-                    </TextBox.ToolTip>
-                </TextBox>
+            <Grid x:Name="grdControlConfigurations" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10">
+                
+                <!--#region Styles/Definitions-->
+                <Grid.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="true">
+                                <Setter Property="Grid.Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="false">
+                                <Setter Property="Grid.Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <!--#endregion-->
+                
+                <TextBlock Text="Configuration" Style="{DynamicResource TileHeaderStyle}" Panel.ZIndex="1"/>
+                <CheckBox IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" 
+                          VerticalAlignment="Top" HorizontalAlignment="Right" MaxHeight="20" 
+                          Style="{StaticResource CheckBoxSaveImageStyle}"/>
 
-                <!--#region ENABLE LOGS -->
-
-                <TextBlock Text="Enable logging to file" Margin="5,0,0,0"/>
-
-                <ToggleButton Height="19.2" Width="55" 
-                              Margin="5,5,0,5"
-                              IsChecked="{Binding IsLoggingEnabled}" 
-                              Style="{DynamicResource ToggleButtonStyle}"/>
-
-                <!--#endregion-->
-
-
-
-                <!--#region SLIDER -->
-
-                <TextBlock Text="Change Intervals" Margin="5,0,0,2"/>
-
-                <StackPanel Orientation="Horizontal" >
-                    <Slider x:Name="slInterval" 
-                            Value="{Binding Ping.IntervalBetweenPings}" 
-                            VerticalAlignment="Center" 
-                            Margin="5,5,5,5"
-                            Minimum="1" SmallChange="0.5"  Cursor="Hand" 
-                            IsSnapToTickEnabled="True" MinWidth="70">
-                        <Slider.ToolTip>Select a interval between pings from 1 - 10 seconds.</Slider.ToolTip>
-                    </Slider>
-                    <Label x:Name="tbIntervalValue" 
-                       Content="{Binding Value, ElementName=slInterval}" 
-                       FontFamily="{StaticResource ButtonFont}"
-                       FontWeight="Normal" 
-                       Padding="0,0,0,0" 
-                       VerticalAlignment="Center"/>
-                    <Label FontWeight="Normal" 
-                       VerticalAlignment="Center" 
-                       Padding="0,0,0,0" 
-                       FontFamily="{StaticResource ButtonFont}"
-                       Content="s"/>
+                <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
+                    <TextBlock Text="File path to log file:"/>
+                    <TextBox Text="{Binding LogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
+                    <TextBlock Text="Interval between sending ping"/>
+                    <RadioButton GroupName="rdbInterval" Content="60 ms" />
+                    <RadioButton GroupName="rdbInterval" Content="120 ms"/>
+                    <RadioButton GroupName="rdbInterval" Content="240 ms"/>
                 </StackPanel>
+        </Grid>
 
+            <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" d:IsHidden="True">
+                
+                <!--#region Triggers & Definitions -->
+                <Grid.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="true">
+                                <Setter Property="Grid.Visibility" Value="Hidden"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="false">
+                                <Setter Property="Grid.Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <!--#endregion-->
 
-
-
-                <!--#region BUTTON_START-->
-
-                <Grid Margin="5,5,5,5" HorizontalAlignment="Center">
-
-                    <ToggleButton x:Name="btnStartPing"
-                                  IsChecked="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Style="{DynamicResource PingButtonStyle}"/>
-
+                <!-- Header -->
+                <Grid>
+                    <TextBlock Text="Controls" Style="{DynamicResource TileHeaderStyle}"/>
+                    <CheckBox IsChecked="{Binding ShowConfiguration, Mode=TwoWay}"
+                              VerticalAlignment="Top" MaxHeight="20" HorizontalAlignment="Right"
+                              Style="{StaticResource CheckBoxGearImageStyle}" >
+                    </CheckBox>
                 </Grid>
 
-                <CheckBox Width="20" IsChecked="{Binding ShowControlConfiguration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                </CheckBox>
+                <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2" Margin="5,10,5,0" VerticalAlignment="Top">
 
-                <!--#endregion-->
+                    <!--#region TEXTBOX_IP_ADDRESS_ENTRY-->
+                    <TextBlock Text="Enter IP Iddress" Margin="5,0,5,0"/>
+
+                    <TextBox x:Name="tbAddressOrIp"
+                         Text="{Binding Ping.AddressOrIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
+                         IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="5,5,5,5"
+                         Style="{StaticResource placeHolder}" Tag="www.google.com"
+                         FontWeight="Normal"
+                         VerticalAlignment="Center"
+                         FontSize="18" >
+                        <TextBox.ToolTip>
+                            <ToolTip Content="Enter an IP Address or Domain Name such as: 8.8.8.8 or google.com"/>
+                        </TextBox.ToolTip>
+                    </TextBox>
+                    <!--#endregion-->
+
+                    <!--#region ENABLE LOGS -->
+
+                    <TextBlock Text="Enable logging to file" Margin="5,0,0,0"/>
+
+                    <ToggleButton Height="19.2" Width="55" 
+                                  Margin="5,5,0,5"
+                                  IsChecked="{Binding IsLoggingEnabled}" 
+                                  Style="{DynamicResource tglSliderToggleButtonStyle}"/>
+
+                    <!--#endregion-->
+
+                    <!--#region SLIDER -->
+
+                    <TextBlock Text="Change Intervals" Margin="5,0,0,2"/>
+
+                    <StackPanel Orientation="Horizontal" >
+                        <Slider x:Name="slInterval" 
+                                Value="{Binding Ping.IntervalBetweenPings}" 
+                                VerticalAlignment="Center" 
+                                Margin="5,5,5,5"
+                                Minimum="1" SmallChange="0.5"  Cursor="Hand" 
+                                IsSnapToTickEnabled="True" MinWidth="70">
+                            <Slider.ToolTip>Select a interval between pings from 1 - 10 seconds.</Slider.ToolTip>
+                        </Slider>
+                        <Label x:Name="tbIntervalValue" 
+                               Content="{Binding Value, ElementName=slInterval}" 
+                               FontFamily="{StaticResource ButtonFont}"
+                               FontWeight="Normal" 
+                               Padding="0,0,0,0" 
+                               VerticalAlignment="Center"/>
+                        <Label FontWeight="Normal" 
+                               VerticalAlignment="Center" 
+                               Padding="0,0,0,0" 
+                               FontFamily="{StaticResource ButtonFont}"
+                               Content="s"/>
+                    </StackPanel>
+
+                    <!--#endregion-->
+
+                    <!--#region BUTTON_START-->
+
+                    <ToggleButton x:Name="btnStartPing"
+                                    IsChecked="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource tglToggleButtonStyle}" Width="65"/>
+
+                    <!--#endregion-->
 
 
-            </StackPanel>
+                </StackPanel>
 
 
 
         </Grid>
 
+    </Grid>
         <!--#endregion-->
 
         <!--#region Sucess Rate GAUGE -->
@@ -293,6 +384,7 @@
                         <!-- This grid fixes an issue where the datagrid will overexpand its width when contained with the tabitem-->
                         <DataGrid x:Name="dgPingResults"
                                   ItemsSource="{Binding PingResultsList}" 
+                                  Width="{Binding ActualWidth, ElementName=dgGrid}"
                                   Background="Transparent"
                                   GridLinesVisibility="none" AutoGenerateColumns="false" 
                                   HorizontalContentAlignment="Center" HorizontalAlignment="Center" >
@@ -316,8 +408,6 @@
         </Grid>
 
         <!--#endregion-->
-
-
 
     </Grid>
 

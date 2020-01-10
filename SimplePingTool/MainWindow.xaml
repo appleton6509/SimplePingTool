@@ -10,9 +10,9 @@
         Title="Simple Ping Tool" 
         MinWidth="840" MinHeight="600"
         Width="840" Height="600"
-        WindowStartupLocation="CenterScreen" Opacity="0.94" 
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
-        Background="{StaticResource ResourceKey=MenuBackgroundColor}">
+        Background="{StaticResource BackgroundGrey}">
     <Window.Resources>
 
 
@@ -67,32 +67,6 @@
 
         <!--#endregion-->
 
-        <!--#region Close Button -->
-        <Style x:Key="CloseButton" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="#FFD45D5D"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#FFF7ECEC"/>
-            <Setter Property="Content" Value="X"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FFD62929"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!--#endregion-->
 
         <!--#endregion-->
         
@@ -132,6 +106,7 @@
 
 
         </StackPanel>
+
         <!--#endregion-->
 
         <!--#region TOP BAR - EXIT,MIN,MAX-->
@@ -140,16 +115,17 @@
               Background="{StaticResource ResourceKey=MenuBackgroundColor}" 
               MouseDown="gdTitleBar_MouseDown">
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Button x:Name="button" 
-                        Style="{DynamicResource CloseButton}"
+                <Button x:Name="btnCloseButton" 
+                        Style="{DynamicResource btnBoxStyleRed}"
                         Command="{Binding Close}"
-                        Width="30" Height="25" BorderBrush="{x:Null}" Content="X" />
+                        Width="30" Height="25" Content="X" />
             </StackPanel>
         </Grid>
+
         <!--#endregion-->
 
         <!--#region VIEW_CONTENT-->
-        <ContentControl x:Name="ViewContent" Content="{Binding CurrentViewModel}" DockPanel.Dock="Right"/>
+        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" />
         <!--#endregion-->
 
     </DockPanel>
