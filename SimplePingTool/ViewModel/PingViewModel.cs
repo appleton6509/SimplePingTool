@@ -63,6 +63,21 @@ namespace ITBox.ViewModel
         }
         private bool _isPingRunning = false;
 
+
+        private bool _showConfiguration = false;
+        public bool ShowConfiguration
+        {
+            get
+            {
+                return _showConfiguration;
+            }
+            set
+            {
+                _showConfiguration = value;
+                RaisePropertyChange();
+            }
+        }
+
         /// <summary>
         /// Indicates if logging is currently enabled
         /// </summary>
@@ -89,6 +104,9 @@ namespace ITBox.ViewModel
 
             } 
         }
+
+
+        public string LogFilePath { get; set; }
 
         /// <summary>
         /// A Live Charts property that converts a value to calculate memory size and returns it

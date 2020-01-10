@@ -24,5 +24,6 @@ namespace ITBox.View
         {
              InitializeComponent();
         }
+
     }
 }
