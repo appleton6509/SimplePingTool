@@ -21,11 +21,11 @@ namespace ITBox.Converters
                 var containerWidth = ((ListBox)value[2]).ActualWidth;
 
                 return decimalPercentage * containerWidth;
-
             }
 
+            //values are not correct types, return a width of 0
             else
-                return null;
+                return (double)0;
         }
 
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
@@ -35,7 +35,12 @@ namespace ITBox.Converters
 
         private double ConvertToPercentage(double valueToConvert, double total)
         {
-            return (valueToConvert / total);
+            if (valueToConvert != 0 && total != 0)
+                return (valueToConvert / total);
+
+            //values are zero, return 0 percent
+            else
+                return (double)0;
         }
     }
 }

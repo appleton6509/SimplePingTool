@@ -19,7 +19,7 @@
         <!--#endregion-->
         
         <FontFamily x:Key="ButtonFont">Yu Gothic UI Semilight</FontFamily>
-
+        <Thickness x:Key="grdMargin">5,5,5,5</Thickness>
         
         <!--#region Default Font Styles -->
         
@@ -102,6 +102,7 @@
             <Setter Property="Fill" Value="White"/>
             <Setter Property="StrokeThickness" Value="0.2"/>
             <Setter Property="Stroke" Value="#FF757171"/>
+            <Setter Property="Margin" Value="5"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect Color="#FFD6CFCF" BlurRadius="2" ShadowDepth="2" Opacity="0.50"/>

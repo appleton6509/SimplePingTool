@@ -74,10 +74,13 @@ namespace ITBox.ViewModel
             set
             {
                 //if new selected process is null, do nothing and return
-                if (value == null)
+                if (value != null)
+                {
+                    _selectedProcess = value;
+                    RaisePropertyChange();
+                }
+                else
                     return;
-                _selectedProcess = value;
-                RaisePropertyChange();
             }
         }
 
@@ -92,7 +95,7 @@ namespace ITBox.ViewModel
             {
                 while (true)
                 {
-
+                    
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.DataBind, new Action(UpdateProcessCollection));
 
                     System.Threading.Thread.Sleep(1000);

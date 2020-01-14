@@ -35,7 +35,7 @@ namespace PingData
         {
             string address = ipOrDNS;
 
-            if (address == String.Empty || address == null)
+            if (String.IsNullOrEmpty(address))
                 return false;
             else if (IpAddressRegex.IsMatch(address) || HostNameRegex.IsMatch(address))
                 return true;

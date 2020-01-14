@@ -7,8 +7,8 @@
     <ProjectGuid>{ED7B3929-F834-4A2E-B831-FF44F096F865}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PingDataTests1</RootNamespace>
-    <AssemblyName>PingDataTests1</AssemblyName>
+    <RootNamespace>PingDataTests</RootNamespace>
+    <AssemblyName>PingDataTests</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

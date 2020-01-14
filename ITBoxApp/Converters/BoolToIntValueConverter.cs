@@ -36,8 +36,8 @@ namespace ITBox.Converters
                 int.TryParse(parameter.ToString(), out int newValue);
                 return newValue;
             }
-            else { return 0; }
-            
+            else 
+                return null;
         }
     }
 }

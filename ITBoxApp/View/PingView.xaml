@@ -13,7 +13,7 @@
 
         <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converter:BoolToIntValueConverter x:Key="BoolToIntValueConverter"/>
-
+        
         <!--#region Toggle Button(Button Style)-->
 
         <SolidColorBrush x:Key="Button.Static.Background" Color="#FF3B3434"/>
@@ -144,12 +144,14 @@
         </Grid.ColumnDefinitions>
         <!--#endregion-->
 
+        <Rectangle Style="{DynamicResource TileRectStyle}" />
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Column="1"/>
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Column="2"/>
+        <Rectangle Style="{DynamicResource TileRectStyle}" Grid.Row="1" Grid.ColumnSpan="3"/>
+
         <!--#region Controls -->
-        <Grid x:Name="grdAllControls" Grid.Row="0" Grid.Column="0">
-
-            <Rectangle Style="{DynamicResource TileRectStyle}"  Margin="5,5,5,5"/>
-
-            <Grid x:Name="grdControlConfigurations" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10" d:IsHidden="True">
+        <Grid x:Name="grdAllControls" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}">
+            <Grid x:Name="grdControlConfigurations" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}">
                 
                 <!--#region Styles/Definitions-->
                 <Grid.Style>
@@ -175,18 +177,20 @@
                 <CheckBox IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" 
                           VerticalAlignment="Top" HorizontalAlignment="Right" MaxHeight="20" 
                           Style="{StaticResource CheckBoxSaveImageStyle}"/>
-
+                
                 <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
                     <TextBlock Text="File path to log file:"/>
-                    <TextBox Text="{Binding LogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
+                    <TextBox Text="{Binding SelectedLogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
                     <TextBlock Text="Interval between sending ping"/>
-                    <RadioButton GroupName="rdbInterval" Content="60" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=60, Mode=OneWayToSource}"/>
-                    <RadioButton GroupName="rdbInterval" Content="120" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=120,Mode=OneWayToSource}"/>
+                    <RadioButton GroupName="rdbInterval" Content="60" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter},  ConverterParameter=60, Mode=OneWayToSource}"/>
+                    <RadioButton GroupName="rdbInterval" Content="120" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=120, Mode=OneWayToSource}"/>
                     <RadioButton GroupName="rdbInterval" Content="240" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=240, Mode=OneWayToSource}"/>
-                </StackPanel>
+              
+                    </StackPanel>
+                
         </Grid>
 
-            <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10">
+            <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}" d:IsHidden="True">
                 
                 <!--#region Triggers & Definitions -->
                 <Grid.Style>
@@ -296,13 +300,13 @@
         <!--#endregion-->
 
         <!--#region Sucess Rate GAUGE -->
-        <Grid Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
+        <Grid x:Name="grdSuccessRate" Grid.Row="0" Grid.Column="1" Margin="{StaticResource grdMargin}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
 
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
+
 
             <TextBlock Text="Success Rate" Style="{DynamicResource TileHeaderStyle}"/>
 
@@ -327,13 +331,11 @@
         <!--#endregion-->
 
         <!--#region Average Ms GAUGE -->
-        <Grid Grid.Row="0" Grid.Column="2" Margin="5,5,5,5">
+        <Grid x:Name="grdAvgMs" Grid.Row="0" Grid.Column="2" Margin="{StaticResource grdMargin}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
-
-            <Rectangle Style="{DynamicResource TileRectStyle}" Grid.RowSpan="2"/>
 
             <TextBlock Text="Avg. Milliseconds" Style="{DynamicResource TileHeaderStyle}"/>
 
@@ -358,9 +360,7 @@
         <!--#endregion-->
 
         <!--#region TAB Control-->
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="5,5,5,5">
-
-            <Rectangle Style="{DynamicResource TileRectStyle}"/>
+        <Grid x:Name="chartResults" Grid.Row="1" Grid.ColumnSpan="3" Margin="{StaticResource grdMargin}">
 
             <TabControl x:Name="GraphAndGrid" Margin="8,8,8,8" BorderThickness="0">
                 <!--#region GRAPH LINE SERIES-->

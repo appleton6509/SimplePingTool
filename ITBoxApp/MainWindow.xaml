@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ITBox" 
         xmlns:viewmodel="clr-namespace:ITBox.ViewModel" 
         xmlns:view="clr-namespace:ITBox.View"  
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="Simple Ping Tool" 
         MinWidth="840" MinHeight="600"
@@ -117,7 +118,7 @@
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
                 <Button x:Name="btnCloseButton" 
                         Style="{DynamicResource btnBoxStyleRed}"
-                        Command="{Binding Close}"
+                        Command="{Binding Close, diag:PresentationTraceSources.TraceLevel=Medium}"
                         Width="30" Height="25" Content="X" />
             </StackPanel>
         </Grid>
@@ -125,7 +126,7 @@
         <!--#endregion-->
 
         <!--#region VIEW_CONTENT-->
-        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel}" />
+        <ContentControl x:Name="ViewContent" DockPanel.Dock="Right" Content="{Binding CurrentViewModel, diag:PresentationTraceSources.TraceLevel=Medium}" />
         <!--#endregion-->
 
     </DockPanel>

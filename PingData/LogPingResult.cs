@@ -9,24 +9,28 @@ namespace PingData
 {
     public static class LogPingResult
     {
-        public static void LogToTextFile(PingResult pingResults, string fileName = null)
+        /// <summary>
+        /// Directory path of the log file
+        /// </summary>
+        public static string Path = Directory.GetCurrentDirectory() + "\\";
+        
+        public static void LogToTextFile(PingResult pingResults, string path = null)
         {
-            if (pingResults == null)
-                return;
 
-            if (fileName == null)
-                fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".txt";
-
-            using (StreamWriter fs = File.AppendText(fileName))
+            if (pingResults != null)
             {
-                if (pingResults.StatusCode == 0) //Ping Successful
+                if (String.IsNullOrEmpty(path))
+                    path = Path;
+
+
+                string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
+
+                using (StreamWriter fs = File.AppendText(path + fileName))
                 {
-                    fs.WriteLine($"{pingResults.TimeStamp}     Host: {pingResults.AddressOrIp} Status: {pingResults.Status} Latency: {pingResults.Latency} ms");
-                } else //Ping Failed 
-                {
-                    fs.WriteLine($"{pingResults.TimeStamp}     Host: {pingResults.AddressOrIp} Status: {pingResults.Status} Error Code: {pingResults.StatusCode} Error Message:{pingResults.ErrorMessage}");
+                    fs.WriteLine(pingResults.ToString());
                 }
-            } 
+            }
+
         }
     }
 }

@@ -16,5 +16,10 @@ namespace ITBox.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public interface IOService
+        {
+
+        }
     }
 }

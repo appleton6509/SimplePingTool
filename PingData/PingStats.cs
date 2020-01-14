@@ -11,7 +11,13 @@ namespace PingData
     public class PingStats : INotifyPropertyChanged
     {
 
+        #region Private Members
         private List<int> _successfulPings = new List<int>();
+        private int _packetsSent;
+        private int _maxLatency;
+        private int _packetsLost;
+        #endregion
+
 
         /// <summary>
         /// calculated average latency
@@ -20,7 +26,8 @@ namespace PingData
         {
             get
             {
-                if (_successfulPings.Count.Equals(0))
+
+                if (_successfulPings.Count == 0)
                     return 0;
                 else
                     return Math.Round(_successfulPings.Average());
@@ -40,7 +47,7 @@ namespace PingData
                 OnPropertyChanged();
             }
         }
-        private int _packetsSent;
+
 
 
         /// <summary>
@@ -55,7 +62,7 @@ namespace PingData
                 OnPropertyChanged();
             }
         }
-        private int _maxLatency;
+ 
 
         /// <summary>
         /// Total number of packets lost within the results list
@@ -70,7 +77,7 @@ namespace PingData
             }
 
         }
-        private int _packetsLost;
+  
 
         public PingStats()
         {
@@ -86,22 +93,24 @@ namespace PingData
         public void Add(PingResult result)
         {
 
-            if (result.AddressOrIp == null)         //packet has no host, return and do nothing
+            if (String.IsNullOrEmpty(result.AddressOrIp))
                 return;
 
-
-            if (result.Status == PingHost.Status.SUCCESS)
+            if (result.Status.Equals(PingResult.StatusMessage.SUCCESS))
             {
                 //On successful packet send, determine if max latency increased
                 if (result.Latency > _maxLatency)
                 {
                     MaxLatency = result.Latency;
                 }
-                //Latency is less then zero, set to zero
-                if (result.Latency < 0)
+                //Latency is less then 1, set to zero
+                if (result.Latency < 1)
                 {
-                    result.Latency = 0;
+                    result.Latency = 1;
                 }
+
+                _successfulPings.Add(result.Latency);
+                OnPropertyChanged(nameof(AverageLatency));
             }
             else // errors or time outs increase packets lost value
             {
@@ -109,11 +118,6 @@ namespace PingData
             }
 
             PacketsSent++;
-
-            if (result.Status == PingHost.Status.SUCCESS)
-                _successfulPings.Add(result.Latency);
-
-            OnPropertyChanged(nameof(AverageLatency));
         }
 
         /// <summary>

@@ -41,7 +41,7 @@ namespace PingData.Tests
             PingResult result = new PingResult()
             {
                 AddressOrIp = "www.google.com",
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
                 Latency = -1,
             };
             bool expectedResult = true;
@@ -49,7 +49,7 @@ namespace PingData.Tests
 
             //act
             stats.Add(result);
-            actualResult = (stats.MaxLatency == 0 && stats.PacketsLost == 0 && stats.PacketsSent == 1 && stats.AverageLatency == 0);
+            actualResult = (stats.MaxLatency == 0 && stats.PacketsLost == 0 && stats.PacketsSent == 1 && stats.AverageLatency == 1);
 
             //assert
             Assert.AreEqual(expectedResult, actualResult);
@@ -64,7 +64,7 @@ namespace PingData.Tests
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -86,7 +86,7 @@ namespace PingData.Tests
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingHost.Status.FAILURE,
+                Status = PingResult.StatusMessage.FAILURE,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -108,13 +108,13 @@ namespace PingData.Tests
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingHost.Status.FAILURE,
+                Status = PingResult.StatusMessage.FAILURE,
             };
             PingResult result2 = new PingResult()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 5,
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -152,19 +152,19 @@ namespace PingData.Tests
             {
                 AddressOrIp = "www.google.com",
                 Latency = 0,
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
             };
             PingResult result2 = new PingResult()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 50,
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
             };
             PingResult result3 = new PingResult()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 100,
-                Status = PingHost.Status.SUCCESS,
+                Status = PingResult.StatusMessage.SUCCESS,
             };
 
             double expectedResult = 50;

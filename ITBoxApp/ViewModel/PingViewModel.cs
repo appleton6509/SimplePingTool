@@ -16,9 +16,13 @@ namespace ITBox.ViewModel
 {
     public class PingViewModel : BaseViewModel
     {
+        #region Private Members
+        private bool _isPingNotRunning = true;
+        private bool _isPingRunning = false;
+        private bool _showConfiguration = false;
+        #endregion
 
         #region Public Binding Properties
-
         /// <summary>
         /// Indicates if a Ping is NOT currently running. 
         /// </summary>
@@ -38,7 +42,7 @@ namespace ITBox.ViewModel
                 RaisePropertyChange();
             }
         }
-        private bool _isPingNotRunning = true;
+
 
         /// <summary>
         /// Indicates if a ping is currently running
@@ -61,10 +65,10 @@ namespace ITBox.ViewModel
 
             }
         }
-        private bool _isPingRunning = false;
 
-
-        private bool _showConfiguration = false;
+        /// <summary>
+        /// Bool value indicating whether to show or not the configuration.
+        /// </summary>
         public bool ShowConfiguration
         {
             get
@@ -79,18 +83,18 @@ namespace ITBox.ViewModel
         }
 
         /// <summary>
-        /// Indicates if logging is currently enabled
+        /// Bool value that returns true if logging is enabled
         /// </summary>
         public bool IsLoggingEnabled { get; set; }
 
         /// <summary>
-        /// Returns the success rate(percentage) of all ping results
+        /// Returns the success rate(percentage) of all ping results.
         /// </summary>
         public double SuccessfulPingRate { 
             
             get
             {
-                double success = PingResultsList.Count(x => x.Status == PingHost.Status.SUCCESS);
+                double success = PingResultsList.Count(x => x.Status == PingResult.StatusMessage.SUCCESS);
                 double total = PingResultsList.Count;
 
                 if (total > 0 && success > 0)
@@ -116,14 +120,15 @@ namespace ITBox.ViewModel
             }
             set
             {
-                if (value <= 0 || Int16.Equals(value,Ping.IntervalBetweenPings))
-                    return;
-                else
+                if (value > 0 && !Int16.Equals(value,Ping.IntervalBetweenPings))
                     Ping.IntervalBetweenPings = value;
             }
         }
 
-        public string LogFilePath { get; set; }
+        /// <summary>
+        /// The chosen path to save the log file to
+        /// </summary>
+        public string SelectedLogFilePath = "/";
 
         /// <summary>
         /// A Live Charts property that converts a value to calculate memory size and returns it
@@ -205,6 +210,8 @@ namespace ITBox.ViewModel
                 return;
             }
 
+            ClearResults();
+
             while (IsPingRunning)
             {
                 await StartPingTask();
@@ -262,9 +269,10 @@ namespace ITBox.ViewModel
             Stats.Add(newPingResult);
 
             int zeroMillisecond = 0;
+            //used by FailedPings for charts to display a value on failure
             int tenMillisecond = 10;
 
-            if (newPingResult.Status.Equals(PingHost.Status.SUCCESS))
+            if (newPingResult.Status.Equals(PingResult.StatusMessage.SUCCESS))
             {
                 SuccessfulPing.Add(newPingResult.Latency);
                 FailedPing.Add(zeroMillisecond);
@@ -276,9 +284,6 @@ namespace ITBox.ViewModel
                 SuccessfulPing.Add(zeroMillisecond);
             }
         }
-
-
-
         #endregion Private Methods
 
 

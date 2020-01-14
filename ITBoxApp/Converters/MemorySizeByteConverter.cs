@@ -31,6 +31,10 @@ namespace ITBox.Converters
         /// </remarks>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (!(value is double))
+                return null;
+            
+            
             double convertedValue;
             double inputValue = (double)value;
             string label;

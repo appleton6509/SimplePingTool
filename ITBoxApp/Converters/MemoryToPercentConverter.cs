@@ -27,8 +27,10 @@ namespace ITBox.Converters
 
         private double ConvertToPercentage(double valueToConvert, double totalMemoryInUse)
         {
-            double percentage = (valueToConvert / totalMemoryInUse) * 100;
-            return percentage;
+            if (valueToConvert != 0 && totalMemoryInUse != 0)
+                return (valueToConvert / totalMemoryInUse) * 100;
+            else
+                return (double)0;
         }
     }
 }
