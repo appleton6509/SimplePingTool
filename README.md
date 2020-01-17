@@ -1,17 +1,7 @@
-# IT-Tool-Box
-### a collection of tools for IT professionals
+# SimplePingTool
+### a simple ping tool with modern UI 
 
 
 #### Ping
-- Graphical interface, statistics and file logging
+- Graphical interface, Charts, Statistics, and File logging
 
-#### Memory 
-- Memory related information for processes and general hardware memory details
-
-#### Scan Ports
-- a open port viewer similar to MS Netstats in a graphical interface 
-
-#### Open Ports
-- a port scanner for TCP connections
-
-etc.. etc..
