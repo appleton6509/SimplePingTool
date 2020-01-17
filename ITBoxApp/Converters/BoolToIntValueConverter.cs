@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace ITBox.Converters
+namespace SimplePingTool.Converters
 {
     /// <summary>
     /// Converts a bool value with string parameter containing a int value, to the supplied int value.

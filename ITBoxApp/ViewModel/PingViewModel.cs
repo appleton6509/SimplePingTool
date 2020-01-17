@@ -1,7 +1,7 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using PingData;
-using ITBox.HelperClasses;
+using SimplePingTool.HelperClasses;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ITBox.ViewModel
+namespace SimplePingTool.ViewModel
 {
     public class PingViewModel : BaseViewModel
     {
@@ -105,7 +105,6 @@ namespace ITBox.ViewModel
                     
                 else
                     return 0;
-
             } 
         }
 
@@ -161,7 +160,7 @@ namespace ITBox.ViewModel
         public ChartValues<double> SuccessfulPing { get; set; } = new ChartValues<double>();
 
         /// <summary>
-        /// a collection for successful ping results stored as a latency value
+        /// a collection for Failed ping results stored as a latency value
         /// </summary>
         public ChartValues<double> FailedPing { get; set; } = new ChartValues<double>();
 
@@ -183,8 +182,6 @@ namespace ITBox.ViewModel
         public ICommand StopPingCommand { get; set; }
 
         #endregion ICommands
-
-
 
         public PingViewModel()
         {
@@ -266,22 +263,27 @@ namespace ITBox.ViewModel
         /// <param name="newPingResult"></param>
         private void UpdatePingResultCollections(PingResult newPingResult)
         {
+
+
             Stats.Add(newPingResult);
 
-            int zeroMillisecond = 0;
-            //used by FailedPings for charts to display a value on failure
-            int tenMillisecond = 10;
+            RaisePropertyChange(nameof(SuccessfulPingRate)); //Notify UI of ping rate change
+
+            //set chart plot point to zero millisecond, effectively hiding failedping results when ping successful 
+            int chartHidePingLatency = 0;
+            //set chart plot point to 10 millisecond, effectively displaying a failed ping result on the chart.
+            int chartShowFailedPing = 10; 
 
             if (newPingResult.Status.Equals(PingResult.StatusMessage.SUCCESS))
             {
                 SuccessfulPing.Add(newPingResult.Latency);
-                FailedPing.Add(zeroMillisecond);
+                FailedPing.Add(chartHidePingLatency);
             }
 
-            else
+            else 
             {
-                FailedPing.Add(tenMillisecond);
-                SuccessfulPing.Add(zeroMillisecond);
+                FailedPing.Add(chartShowFailedPing);
+                SuccessfulPing.Add(chartHidePingLatency);
             }
         }
         #endregion Private Methods
@@ -302,8 +304,6 @@ namespace ITBox.ViewModel
                 var newPingResult = ((ObservableCollection<PingResult>)sender)[e.NewStartingIndex];
 
                 UpdatePingResultCollections(newPingResult);
-
-                RaisePropertyChange(nameof(SuccessfulPingRate));
 
                 //log to file
                 LogToFile(newPingResult);

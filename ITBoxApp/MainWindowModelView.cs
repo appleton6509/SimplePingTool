@@ -1,18 +1,10 @@
 ﻿using PingData;
-using ITBox.HelperClasses;
-using ITBox.ViewModel;
-using System;
+using SimplePingTool.HelperClasses;
+using SimplePingTool.ViewModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ITBox
+namespace SimplePingTool
 {
 
     //TODO: Validation for user input
@@ -47,16 +39,6 @@ namespace ITBox
         /// </summary>
         public ICommand Close { get; set; }
 
-        /// <summary>
-        /// ICommand for changing to Port Scan View
-        /// </summary>
-        public ICommand ChangeToPortView { get; set; }
-
-
-        /// <summary>
-        /// ICommand for changing to Process Scan View
-        /// </summary>
-        public ICommand ChangeToMemoryView { get; set; }
 
         #endregion
 
@@ -67,9 +49,7 @@ namespace ITBox
         /// </summary>
         private readonly Dictionary<string, BaseViewModel> ViewModelsList = new Dictionary<string, BaseViewModel>()
             {
-                {nameof(PingViewModel), new PingViewModel()},
-                {nameof(PortViewModel), new PortViewModel()},
-                {nameof(MemoryViewModel), new MemoryViewModel()},
+                {nameof(PingViewModel), new PingViewModel()}
             };
 
         #endregion
@@ -80,8 +60,6 @@ namespace ITBox
             GoToPingView();
 
             ChangeToPingView = new RelayCommand<object>(GoToPingView);
-            ChangeToPortView = new RelayCommand<object>(GoToPortView);
-            ChangeToMemoryView = new RelayCommand<object>(GoToMemoryView);
             Close = new RelayCommand<object>((CloseCommand));
 
         }
@@ -95,28 +73,6 @@ namespace ITBox
         private void GoToPingView(object none = null)
         {
             ViewModelsList.TryGetValue(nameof(PingViewModel), out BaseViewModel view);
-            CurrentViewModel = view;
-        }
-
-        /// <summary>
-        /// Change to the Port Scan view model
-        /// </summary>
-        /// <param name="none"></param>
-        private void GoToPortView(object none = null)
-        {
-            ViewModelsList.TryGetValue(nameof(PortViewModel), out BaseViewModel view);
-            CurrentViewModel = view;
-        }
-
-        /// <summary>
-        /// Change to the Port Scan view model
-        /// </summary>
-        /// <param name="none"></param>
-        private void GoToMemoryView(object none = null)
-        {
-
-            
-            ViewModelsList.TryGetValue(nameof(MemoryViewModel), out BaseViewModel view);
             CurrentViewModel = view;
         }
 

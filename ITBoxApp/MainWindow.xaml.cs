@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using PingData;
 using System.Collections.ObjectModel;
 
-namespace ITBox
+namespace SimplePingTool
 {
     /// <summary>
     /// Main Application of the Simple Ping Tool
@@ -18,7 +18,6 @@ namespace ITBox
         public MainWindow()
         {
             InitializeComponent();
-          
 
         }
 

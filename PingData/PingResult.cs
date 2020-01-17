@@ -67,21 +67,21 @@ namespace PingData
 
         public void AddReplyException(Exception e)
         {
-            //Excep;tion error exists
+            //Exception error exists
 
             this.Status = StatusMessage.ERROR;
             this.Latency = 0;
 
             if (e.InnerException != null)
             {
-                this.AddressOrIp = e.Message;
+               // this.AddressOrIp = e.Message;
                 this.ErrorMessage = e.InnerException.Message;
                 this.StatusCode = e.InnerException.GetHashCode();
 
             }
             else
             {
-                this.AddressOrIp = this.ErrorMessage = e.Message;
+                this.ErrorMessage = e.Message;
                 this.StatusCode = (int)StatusMessage.ERROR;
             }
         }
@@ -90,12 +90,13 @@ namespace PingData
         {
             this.StatusCode = reply.Status.GetHashCode();
 
-            if (this.Status == StatusMessage.SUCCESS) //Successful ping
+
+            if (reply.Status == IPStatus.Success) //Successful ping
             {
                 this.Status = StatusMessage.SUCCESS;
                 this.Latency = (int)reply.RoundtripTime;
             }
-            else 
+            else //failed ping
             {
                 int errorLatency = 0;
                 bool errorIsKnown = PingStatus.Message.ContainsKey(this.StatusCode);

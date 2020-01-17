@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1FBA9F0D-5E57-4D5B-AF90-0128ED1EB66E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ITBox</RootNamespace>
-    <AssemblyName>ITBox</AssemblyName>
+    <RootNamespace>SimplePingTool</RootNamespace>
+    <AssemblyName>SimplePingTool</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -73,7 +73,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ITBox.App</StartupObject>
+    <StartupObject>SimplePingTool.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
@@ -105,21 +105,10 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToIntValueConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Converters\MemorySizeByteConverter.cs" />
-    <Compile Include="Converters\MemoryToPercentConverter.cs" />
-    <Compile Include="Converters\MemoryToWidthConverter.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\PingViewModel.cs" />
-    <Compile Include="ViewModel\MemoryViewModel.cs" />
-    <Compile Include="ViewModel\PortViewModel.cs" />
     <Compile Include="View\PingView.xaml.cs">
       <DependentUpon>PingView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\PortScannerView.xaml.cs">
-      <DependentUpon>PortScannerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MemoryView.xaml.cs">
-      <DependentUpon>MemoryView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -135,14 +124,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\PingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\PortScannerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MemoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -201,10 +182,6 @@
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MemoryData\MemoryData.csproj">
-      <Project>{3AEDD28B-B2FB-4756-A5F3-A3F3189D9FDE}</Project>
-      <Name>MemoryData</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PingData\PingData.csproj">
       <Project>{ae611e47-9d75-4872-a819-a2659be9caf8}</Project>
       <Name>PingData</Name>

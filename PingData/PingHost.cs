@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 
-//just making some notes
 namespace PingData
 {
     static class PingStatus
@@ -110,16 +109,14 @@ namespace PingData
             }
             catch (Exception b)
             {
-
                 result.AddReplyException(b);
             }
             finally
             {
-                //wait for the designated interval 
-                await Task.Delay(_intervalBetweenPings);
-
                 //release resource
                 sender.Dispose();
+
+                await Task.Delay(_intervalBetweenPings);
             }
             //return the ping results
             return result;

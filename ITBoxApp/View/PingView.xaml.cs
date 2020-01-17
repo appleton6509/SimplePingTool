@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ITBox.View
+namespace SimplePingTool.View
 {
     /// <summary>
     /// Interaction logic for PingView.xaml
