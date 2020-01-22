@@ -22,13 +22,13 @@ namespace PingData
             }
             set
             {
-                if (ValidateDirectoryPath(value))
+                if (ParseDirectoryPath(value))
                     _path = value;
                 else
                 {
                     throw new Exception("Directory is invalid or user does not have the correct permissions");
                 }
-                
+
             }
         }
 
@@ -37,20 +37,21 @@ namespace PingData
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static bool ValidateDirectoryPath(string value)
+        private static bool ParseDirectoryPath(string path)
         {
 
-            if (Directory.Exists(value))
+            string newValue = path.Replace("/", @"\");
+
+            if (newValue[newValue.Length-1] != '\\')
+            {
+                newValue += @"\";
+            }
+
+            if (!Directory.Exists(newValue))
             {
                 try
                 {
-                    string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
-
-                    using (StreamWriter fs = File.AppendText(value + fileName))
-                    {
-                        fs.WriteLine(" ");
-                    }
-                    return true;
+                    Directory.CreateDirectory(newValue);
                 }
                 catch
                 {
@@ -58,9 +59,22 @@ namespace PingData
                 }
             }
 
-            return false;
+            try
+            {
+                string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
 
+                using (StreamWriter fs = File.AppendText(newValue + fileName))
+                {
+                    fs.WriteLine("");
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
         /// <summary>
         /// Log the results of a ping to a text file
         /// </summary>
@@ -85,7 +99,6 @@ namespace PingData
             {
                 fs.WriteLine(pingResults.ToString());
             }
-
         }
     }
 }

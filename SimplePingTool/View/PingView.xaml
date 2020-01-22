@@ -366,7 +366,7 @@
                 <!--#region GRAPH LINE SERIES-->
                 <TabItem Header="Graph" Style="{DynamicResource ChartTabItemStyle}" Margin="-2,-2,1.75,0">
                     <Grid>
-                        <lvc:CartesianChart Zoom="X" x:Name="Chart" LegendLocation="Top" 
+                        <lvc:CartesianChart Zoom="X" x:Name="Chart" LegendLocation="Top" Foreground="Black" 
                                             DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
                             <lvc:CartesianChart.Series>
                                 <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
