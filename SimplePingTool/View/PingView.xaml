@@ -9,10 +9,12 @@
              mc:Ignorable="d"
              Background="{StaticResource BackgroundGrey}" d:DesignHeight="510" d:DesignWidth="700">
     
+   
+    
     <UserControl.Resources>
 
         <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converter:BoolToIntValueConverter x:Key="BoolToIntValueConverter"/>
+        <converter:TextToIntConverter x:Key="TextToIntConverter"/>
         
         <!--#region Toggle Button(Button Style)-->
 
@@ -179,14 +181,12 @@
                           Style="{StaticResource CheckBoxSaveImageStyle}"/>
                 
                 <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
-                    <TextBlock Text="File path to log file:"/>
+                    <TextBlock Text="Path to log file:"/>
                     <TextBox Text="{Binding SelectedLogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
-                    <TextBlock Text="Interval between sending ping"/>
-                    <RadioButton GroupName="rdbInterval" Content="60" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter},  ConverterParameter=60, Mode=OneWayToSource}"/>
-                    <RadioButton GroupName="rdbInterval" Content="120" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=120, Mode=OneWayToSource}"/>
-                    <RadioButton GroupName="rdbInterval" Content="240" IsChecked="{Binding SelectedMillisecond, Converter={StaticResource BoolToIntValueConverter}, ConverterParameter=240, Mode=OneWayToSource}"/>
-              
-                    </StackPanel>
+                    <TextBlock Text="Interval between ping's:"/>
+                    <TextBox Text="{Binding SelectedMillisecond, Mode=TwoWay, Converter={StaticResource TextToIntConverter}}" Margin="0,0,154,0"/>
+
+                </StackPanel>
                 
         </Grid>
 

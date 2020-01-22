@@ -35,7 +35,7 @@
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
                 <Button x:Name="btnCloseButton" 
                         Style="{DynamicResource btnBoxStyleRed}"
-                        Command="{Binding Close, diag:PresentationTraceSources.TraceLevel=Medium}"
+                        Command="{Binding Close}"
                         Width="30" Height="25" Content="X" />
             </StackPanel>
         </Grid>
@@ -43,7 +43,7 @@
         <!--#endregion-->
 
         <!--#region VIEW_CONTENT-->
-        <ContentControl x:Name="ViewContent" Content="{Binding CurrentViewModel, diag:PresentationTraceSources.TraceLevel=Medium}" />
+        <ContentControl x:Name="ViewContent" Content="{Binding CurrentViewModel}" />
         <!--#endregion-->
 
     </DockPanel>

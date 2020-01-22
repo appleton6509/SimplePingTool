@@ -103,6 +103,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\TextToIntConverter.cs.cs" />
     <Compile Include="Converters\BoolToIntValueConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />

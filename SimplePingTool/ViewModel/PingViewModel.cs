@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace SimplePingTool.ViewModel
@@ -90,8 +91,8 @@ namespace SimplePingTool.ViewModel
         /// <summary>
         /// Returns the success rate(percentage) of all ping results.
         /// </summary>
-        public double SuccessfulPingRate { 
-            
+        public double SuccessfulPingRate {
+
             get
             {
                 double success = PingResultsList.Count(x => x.Status == PingResult.StatusMessage.SUCCESS);
@@ -99,35 +100,51 @@ namespace SimplePingTool.ViewModel
 
                 if (total > 0 && success > 0)
                 {
-                    double result = ((success / total)*100);
+                    double result = ((success / total) * 100);
                     return Math.Round(result);
                 }
-                    
+
                 else
                     return 0;
-            } 
+            }
         }
 
         /// <summary>
         /// The selected ping interval in millisecond
         /// </summary>
-        public int SelectedMillisecond
+        public double SelectedMillisecond
         {
             get
             {
-                return Ping.IntervalBetweenPings;
+                return (double)Ping.IntervalBetweenPings;
             }
             set
             {
-                if (value > 0 && !Int16.Equals(value,Ping.IntervalBetweenPings))
-                    Ping.IntervalBetweenPings = value;
+                if (value > 0 && !Int16.Equals(value, Ping.IntervalBetweenPings))
+                    Ping.IntervalBetweenPings = (int)value;
             }
         }
 
         /// <summary>
         /// The chosen path to save the log file to
         /// </summary>
-        public string SelectedLogFilePath = "/";
+        public string SelectedLogFilePath { 
+            get
+            {
+                return LogPingResult.Path;
+            }
+            set
+            {
+                try
+                {
+                    LogPingResult.Path = value;
+                } catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+        } 
+
 
         /// <summary>
         /// A Live Charts property that converts a value to calculate memory size and returns it
