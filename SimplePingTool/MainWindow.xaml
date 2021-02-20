@@ -21,8 +21,6 @@
             <view:PingView/>
         </DataTemplate>
         <!--#endregion-->
-
-        
     </Window.Resources>
 
     <DockPanel>

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PingData
 {
-    public class PingStats : INotifyPropertyChanged
+    public class Statistic : INotifyPropertyChanged
     {
 
         #region Private Members
@@ -48,8 +48,6 @@ namespace PingData
             }
         }
 
-
-
         /// <summary>
         /// Max latency value found within the results list
         /// </summary>
@@ -77,9 +75,30 @@ namespace PingData
             }
 
         }
-  
 
-        public PingStats()
+
+        /// <summary>
+        /// Returns the success rate(percentage) of all ping results.
+        /// </summary>
+        public double SuccessfulPingRate
+        {
+
+            get
+            {
+                int success = _successfulPings.Count;
+                int total = _packetsSent;
+                if (_packetsSent > 0 && _successfulPings.Count > 0)
+                {
+                    double result = ((success / total) * 100);
+                    return Math.Round(result);
+                }
+
+                else
+                    return 0;
+            }
+        }
+
+        public Statistic()
         {
             _packetsLost = 0;
             _packetsSent = 0;
@@ -90,34 +109,30 @@ namespace PingData
         /// adds a new ping results to the stats
         /// </summary>
         /// <param name="result"></param>
-        public void Add(PingResult result)
+        public void Add(Response result)
         {
 
             if (String.IsNullOrEmpty(result.AddressOrIp))
                 return;
 
-            if (result.Status.Equals(PingResult.StatusMessage.SUCCESS))
+            if (result.Status.Equals(Response.StatusMessage.SUCCESS))
             {
                 //On successful packet send, determine if max latency increased
                 if (result.Latency > _maxLatency)
-                {
                     MaxLatency = result.Latency;
-                }
+
                 //Latency is less then 1, set to zero
                 if (result.Latency < 1)
-                {
                     result.Latency = 1;
-                }
 
                 _successfulPings.Add(result.Latency);
                 OnPropertyChanged(nameof(AverageLatency));
             }
             else // errors or time outs increase packets lost value
-            {
                 _packetsLost++;
-            }
 
             PacketsSent++;
+            OnPropertyChanged(nameof(SuccessfulPingRate));
         }
 
         /// <summary>

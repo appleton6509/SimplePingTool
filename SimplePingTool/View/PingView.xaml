@@ -153,16 +153,16 @@
 
         <!--#region Controls -->
         <Grid x:Name="grdAllControls" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}">
-            <Grid x:Name="grdControlConfigurations" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}">
+            <Grid x:Name="grdControlConfigurations" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}" d:IsHidden="True">
                 
                 <!--#region Styles/Definitions-->
                 <Grid.Style>
                     <Style>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="true">
+                            <DataTrigger Binding="{Binding Settings.ShowConfiguration}" Value="true">
                                 <Setter Property="Grid.Visibility" Value="Visible"></Setter>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="false">
+                            <DataTrigger Binding="{Binding Settings.ShowConfiguration}" Value="false">
                                 <Setter Property="Grid.Visibility" Value="Collapsed"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
@@ -176,13 +176,13 @@
                 <!--#endregion-->
                 
                 <TextBlock Text="Configuration" Style="{DynamicResource TileHeaderStyle}" Panel.ZIndex="1"/>
-                <CheckBox IsChecked="{Binding ShowConfiguration, Mode=TwoWay}" 
+                <CheckBox IsChecked="{Binding Settings.ShowConfiguration, Mode=TwoWay}" 
                           VerticalAlignment="Top" HorizontalAlignment="Right" MaxHeight="20" 
                           Style="{StaticResource CheckBoxSaveImageStyle}"/>
                 
                 <StackPanel Orientation="Vertical" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top">
                     <TextBlock Text="Path to log file:"/>
-                    <TextBox Text="{Binding SelectedLogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
+                    <TextBox Text="{Binding Settings.SelectedLogFilePath, UpdateSourceTrigger=LostFocus,Mode=TwoWay}"/>
                     <TextBlock Text="Interval between ping's:"/>
                     <TextBox Text="{Binding SelectedMillisecond, Mode=TwoWay, Converter={StaticResource TextToIntConverter}}" Margin="0,0,154,0"/>
 
@@ -190,16 +190,16 @@
                 
         </Grid>
 
-            <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}" d:IsHidden="True">
+            <Grid x:Name="grdControls" Grid.Row="0" Grid.Column="0" Margin="{StaticResource grdMargin}">
                 
                 <!--#region Triggers & Definitions -->
                 <Grid.Style>
                     <Style>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="true">
+                            <DataTrigger Binding="{Binding Settings.ShowConfiguration}" Value="true">
                                 <Setter Property="Grid.Visibility" Value="Hidden"></Setter>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ShowConfiguration}" Value="false">
+                            <DataTrigger Binding="{Binding Settings.ShowConfiguration}" Value="false">
                                 <Setter Property="Grid.Visibility" Value="Visible"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
@@ -216,7 +216,7 @@
                 <!-- Header -->
                 <Grid>
                     <TextBlock Text="Controls" Style="{DynamicResource TileHeaderStyle}"/>
-                    <CheckBox IsChecked="{Binding ShowConfiguration, Mode=TwoWay}"
+                    <CheckBox IsChecked="{Binding Settings.ShowConfiguration, Mode=TwoWay}"
                               VerticalAlignment="Top" MaxHeight="20" HorizontalAlignment="Right"
                               Style="{StaticResource CheckBoxGearImageStyle}" >
                     </CheckBox>
@@ -230,7 +230,7 @@
 
                     <TextBox x:Name="tbAddressOrIp"
                          Text="{Binding Ping.AddressOrIp, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" 
-                         IsEnabled="{Binding IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
+                         IsEnabled="{Binding Settings.IsPingNotRunning, UpdateSourceTrigger=PropertyChanged}" 
                          Margin="5,5,5,5"
                          Style="{StaticResource placeHolder}" Tag="www.google.com"
                          FontWeight="Normal"
@@ -248,7 +248,7 @@
 
                     <ToggleButton Height="19.2" Width="55" 
                                   Margin="5,5,0,5"
-                                  IsChecked="{Binding IsLoggingEnabled}" 
+                                  IsChecked="{Binding Settings.IsLoggingEnabled}" 
                                   Style="{DynamicResource tglSliderToggleButtonStyle}"/>
 
                     <!--#endregion-->
@@ -284,7 +284,7 @@
                     <!--#region BUTTON_START-->
 
                     <ToggleButton x:Name="btnStartPing"
-                                    IsChecked="{Binding IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsChecked="{Binding Settings.IsPingRunning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Style="{DynamicResource tglToggleButtonStyle}" Width="65"/>
 
                     <!--#endregion-->
@@ -315,7 +315,7 @@
                     Margin="0,0,0,10"
                     Uses360Mode="True"
                     HighFontSize="20"
-                    Value="{Binding SuccessfulPingRate}"
+                    Value="{Binding Stats.SuccessfulPingRate}"
                     VerticalAlignment="Stretch"
                     LabelFormatter="{Binding ToPercentageFormatter}"
                     HorizontalAlignment="Stretch"
@@ -369,9 +369,9 @@
                         <lvc:CartesianChart Zoom="X" x:Name="Chart" LegendLocation="Top" Foreground="Black" 
                                             DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
                             <lvc:CartesianChart.Series>
-                                <lvc:StackedAreaSeries Title="Success" Values="{Binding SuccessfulPing}">
+                                <lvc:StackedAreaSeries Title="Success" Values="{Binding ChartData.Success}">
                                 </lvc:StackedAreaSeries>
-                                <lvc:StackedAreaSeries Title="Fail"  Values="{Binding FailedPing}">
+                                <lvc:StackedAreaSeries Title="Fail"  Values="{Binding ChartData.Failures}">
                                 </lvc:StackedAreaSeries>
                             </lvc:CartesianChart.Series>
                         </lvc:CartesianChart>

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace PingData
 {
-    public class PingResult : INotifyPropertyChanged
+    public class Response : INotifyPropertyChanged
     {
         private int _latency;
         /// <summary>

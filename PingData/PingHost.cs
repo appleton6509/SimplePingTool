@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 
@@ -89,12 +88,12 @@ namespace PingData
         /// Starts an asynchronous ping request and returns the result
         /// </summary>
         /// <returns></returns>
-        public async Task<PingResult> StartPingAsync()
+        public async Task<Response> StartPingAsync()
         {
 
             Ping sender = new Ping();
 
-            PingResult result = new PingResult()
+            Response result = new Response()
             {
                 TimeStamp = DateTime.Now,
                 AddressOrIp = this.AddressOrIp

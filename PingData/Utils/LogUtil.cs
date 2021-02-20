@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PingData
 {
-    public static class LogPingResult
+    public static class LogUtil
     {
         private static string _path = Directory.GetCurrentDirectory() + @"\";
 
@@ -40,18 +40,18 @@ namespace PingData
         private static bool ParseDirectoryPath(string path)
         {
 
-            string newValue = path.Replace("/", @"\");
+            string parsedFilePath = path.Replace("/", @"\");
 
-            if (newValue[newValue.Length-1] != '\\')
+            if (parsedFilePath[parsedFilePath.Length-1] != '\\')
             {
-                newValue += @"\";
+                parsedFilePath += @"\";
             }
 
-            if (!Directory.Exists(newValue))
+            if (!Directory.Exists(parsedFilePath))
             {
                 try
                 {
-                    Directory.CreateDirectory(newValue);
+                    Directory.CreateDirectory(parsedFilePath);
                 }
                 catch
                 {
@@ -63,7 +63,7 @@ namespace PingData
             {
                 string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
 
-                using (StreamWriter fs = File.AppendText(newValue + fileName))
+                using (StreamWriter fs = File.AppendText(parsedFilePath + fileName))
                 {
                     fs.WriteLine("");
                 }
@@ -80,25 +80,21 @@ namespace PingData
         /// </summary>
         /// <param name="pingResults"></param>
         /// <param name="path"></param>
-        public static void LogToTextFile(PingResult pingResults, string path = null)
+        public static void LogToTextFile(Response pingResults, string path = null)
         {
             //path unset, set it
             if (String.IsNullOrEmpty(path))
                 path = Path;
 
-            //validate pingresult and directory exists
+            //valid pingresult and directory exists
             if (Object.Equals(pingResults, null) && !Directory.Exists(path))
-            {
                 return;
-            }
 
-
-            string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
+            string currentDate = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-');
+            string fileName = currentDate + ".log";
 
             using (StreamWriter fs = File.AppendText(path + fileName))
-            {
                 fs.WriteLine(pingResults.ToString());
-            }
         }
     }
 }

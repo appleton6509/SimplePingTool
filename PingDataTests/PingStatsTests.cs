@@ -15,8 +15,8 @@ namespace PingData.Tests
         public void Add_AddressResultIsNull()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result = new PingResult()
+            Statistic stats = new Statistic();
+            Response result = new Response()
             {
                 AddressOrIp = null,
             };
@@ -37,11 +37,11 @@ namespace PingData.Tests
         public void Add_LatencyResultIsNegative()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result = new PingResult()
+            Statistic stats = new Statistic();
+            Response result = new Response()
             {
                 AddressOrIp = "www.google.com",
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
                 Latency = -1,
             };
             bool expectedResult = true;
@@ -59,12 +59,12 @@ namespace PingData.Tests
         public void Add_ResultStatusSuccess()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result = new PingResult()
+            Statistic stats = new Statistic();
+            Response result = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -81,12 +81,12 @@ namespace PingData.Tests
         public void Add_ResultStatusFailure()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result = new PingResult()
+            Statistic stats = new Statistic();
+            Response result = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingResult.StatusMessage.FAILURE,
+                Status = Response.StatusMessage.FAILURE,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -103,18 +103,18 @@ namespace PingData.Tests
         public void Add_ResultStatusFailureAndSuccess()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result = new PingResult()
+            Statistic stats = new Statistic();
+            Response result = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 1,
-                Status = PingResult.StatusMessage.FAILURE,
+                Status = Response.StatusMessage.FAILURE,
             };
-            PingResult result2 = new PingResult()
+            Response result2 = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 5,
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
             };
             bool expectedResult = true;
             bool actualResult;
@@ -132,7 +132,7 @@ namespace PingData.Tests
         public void AverageLatency_PingCountIsZero()
         {
             //Assign
-            PingStats stats = new PingStats();
+            Statistic stats = new Statistic();
             double expectedResult = 0;
             double actualResult;
 
@@ -147,24 +147,24 @@ namespace PingData.Tests
         public void AverageLatency_PingCountIsThree()
         {
             //Assign
-            PingStats stats = new PingStats();
-            PingResult result1 = new PingResult()
+            Statistic stats = new Statistic();
+            Response result1 = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 0,
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
             };
-            PingResult result2 = new PingResult()
+            Response result2 = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 50,
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
             };
-            PingResult result3 = new PingResult()
+            Response result3 = new Response()
             {
                 AddressOrIp = "www.google.com",
                 Latency = 100,
-                Status = PingResult.StatusMessage.SUCCESS,
+                Status = Response.StatusMessage.SUCCESS,
             };
 
             double expectedResult = 50;

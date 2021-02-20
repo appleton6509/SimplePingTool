@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-        
+
+        <FontFamily x:Key="ButtonFont">Yu Gothic UI Semilight</FontFamily>
+        <Thickness x:Key="grdMargin">5,5,5,5</Thickness>
+
         <!--#region APP_COLORS-->
         <Brush x:Key="BackgroundGrey">#FAFAFA</Brush>
         <Brush x:Key="MenuBackgroundColor">#242444</Brush>
@@ -17,9 +20,6 @@
         <Brush x:Key="ControlBG_Red1_1">#FFE53F33</Brush>
         
         <!--#endregion-->
-        
-        <FontFamily x:Key="ButtonFont">Yu Gothic UI Semilight</FontFamily>
-        <Thickness x:Key="grdMargin">5,5,5,5</Thickness>
         
         <!--#region Default Font Styles -->
         
