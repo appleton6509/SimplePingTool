@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 
-namespace PingData
+namespace PingData.BusinessLogic
 {
     public class Response : INotifyPropertyChanged
     {

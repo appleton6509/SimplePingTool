@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PingData.BusinessLogic;
+using PingData.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.NetworkInformation;

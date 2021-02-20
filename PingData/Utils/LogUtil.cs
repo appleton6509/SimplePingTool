@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PingData.BusinessLogic;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PingData
+
+namespace PingData.Utils
 {
     public static class LogUtil
     {

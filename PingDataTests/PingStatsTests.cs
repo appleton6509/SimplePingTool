@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PingData;
+using PingData.BusinessLogic;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PingData.Utils;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PingData
+namespace PingData.BusinessLogic
 {
     public class Settings : INotifyPropertyChanged
     {

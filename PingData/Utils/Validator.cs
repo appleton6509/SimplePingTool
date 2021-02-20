@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PingData
+namespace PingData.Utils
 {
     public static class Validator
     {

@@ -1,5 +1,6 @@
 ﻿using PingData;
 using PingData.BusinessLogic;
+using PingData.Utils;
 using SimplePingTool.HelperClasses;
 using System;
 using System.Collections.Generic;
