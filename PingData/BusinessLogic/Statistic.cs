@@ -17,8 +17,7 @@ namespace PingData.BusinessLogic
         private int _maxLatency;
         private int _packetsLost;
         #endregion
-
-
+        #region Public Properties
         /// <summary>
         /// calculated average latency
         /// </summary>
@@ -26,15 +25,9 @@ namespace PingData.BusinessLogic
         {
             get
             {
-
-                if (_successfulPings.Count == 0)
-                    return 0;
-                else
-                    return Math.Round(_successfulPings.Average());
+                return GetAverageLatency();
             }
         }
-
-
         /// <summary>
         /// Total number of packets sent within the results list 
         /// </summary>
@@ -47,7 +40,6 @@ namespace PingData.BusinessLogic
                 OnPropertyChanged();
             }
         }
-
         /// <summary>
         /// Max latency value found within the results list
         /// </summary>
@@ -60,8 +52,6 @@ namespace PingData.BusinessLogic
                 OnPropertyChanged();
             }
         }
- 
-
         /// <summary>
         /// Total number of packets lost within the results list
         /// </summary>
@@ -75,34 +65,20 @@ namespace PingData.BusinessLogic
             }
 
         }
-
-
         /// <summary>
         /// Returns the success rate(percentage) of all ping results.
         /// </summary>
         public double SuccessfulPingRate
         {
-
             get
             {
-                int success = _successfulPings.Count;
-                int total = _packetsSent;
-                if (_packetsSent > 0 && _successfulPings.Count > 0)
-                {
-                    double result = ((success / total) * 100);
-                    return Math.Round(result);
-                }
-
-                else
-                    return 0;
+                return GetSuccessfulPingRate();
             }
         }
-
+        #endregion
         public Statistic()
         {
-            _packetsLost = 0;
-            _packetsSent = 0;
-            _maxLatency = 0;
+            SetDefaults();
         }
 
         /// <summary>
@@ -111,36 +87,69 @@ namespace PingData.BusinessLogic
         /// <param name="result"></param>
         public void Add(Response result)
         {
-
             if (String.IsNullOrEmpty(result.AddressOrIp))
                 return;
 
-            if (result.Status.Equals(Response.StatusMessage.SUCCESS))
+
+            if (result.Status == Response.StatusMessage.SUCCESS)
             {
-                if (result.Latency > _maxLatency)
-                    MaxLatency = result.Latency;
-
-                if (result.Latency < 1)
-                    result.Latency = 1;
-
-                _successfulPings.Add(result.Latency);
-                OnPropertyChanged(nameof(AverageLatency));
+                SetAllLatencyProperties(result);
+                SetSuccessfulPing(result);
             }
-            else // errors or time outs increase packets lost value
+            else 
                 _packetsLost++;
 
+            SetPacketsSent();
+        }
+
+        private void SetPacketsSent()
+        {
             PacketsSent++;
             OnPropertyChanged(nameof(SuccessfulPingRate));
+        }
+
+        private void SetSuccessfulPing(Response result)
+        {
+            _successfulPings.Add(result.Latency);
+            OnPropertyChanged(nameof(AverageLatency));
+        }
+
+        private void SetAllLatencyProperties(Response result)
+        {
+            if (result.Latency > _maxLatency)
+                MaxLatency = result.Latency;
+
+            if (result.Latency < 1)
+                result.Latency = 1;
         }
 
         /// <summary>
         /// Clears all ping results and properties
         /// </summary>
-        public void Clear()
+        public void SetDefaults()
         {
             PacketsLost = 0;
             PacketsSent = 0;
             MaxLatency = 0;
+        }
+
+        private double GetSuccessfulPingRate()
+        {
+            int success = _successfulPings.Count;
+            int total = _packetsSent;
+            if (_packetsSent > 0 && _successfulPings.Count > 0)
+            {
+                double result = ((success / total) * 100);
+                return Math.Round(result);
+            }
+
+            else
+                return 0;
+        }
+
+        private double GetAverageLatency()
+        {
+            return (_successfulPings.Count == 0) ? 0 : Math.Round(_successfulPings.Average());
         }
 
         #region INotifyPropertyChanged

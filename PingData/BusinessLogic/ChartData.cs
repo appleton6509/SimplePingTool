@@ -21,17 +21,33 @@ namespace PingData.BusinessLogic
 
         public void Add(Response response)
         {
-            int successValue = response.Latency;
-            int failedValue = (int)DisplayLatency.HIDE;
-            bool pingFailed = !response.Status.Equals(Response.StatusMessage.SUCCESS);
-            if (pingFailed)
-            {
-                successValue = (int)DisplayLatency.HIDE;
-                failedValue = (int)DisplayLatency.SHOW;
-            }
-            Success.Add(successValue);
-            Failures.Add(failedValue);
+            Success.Add(GetSuccessValue(response));
+            Failures.Add(GetFailureValue(response));
+            
         }
+
+        private int GetSuccessValue(Response response)
+        {
+            bool pingFailed = !response.Status.Equals(Response.StatusMessage.SUCCESS);
+            int successValue;
+            if (pingFailed)
+                successValue = (int)DisplayLatency.HIDE;
+            else
+                successValue = response.Latency;
+            return successValue;
+        }
+
+        private int GetFailureValue(Response response)
+        {
+            bool pingFailed = !response.Status.Equals(Response.StatusMessage.SUCCESS);
+            int failedValue;
+            if (pingFailed)
+                failedValue = (int)DisplayLatency.SHOW;
+            else
+                failedValue = (int)DisplayLatency.HIDE;
+            return failedValue;
+        }
+
 
         public void Clear()
         {  

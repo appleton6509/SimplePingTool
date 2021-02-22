@@ -110,10 +110,7 @@ namespace PingData.BusinessLogic
         /// </summary>
         public ObservableCollection<string> AddressList { get; set; } = new ObservableCollection<string>()
         {
-            "8.8.8.8",
-            "8.8.4.4",
-            "www.yahoo.com",
-            "www.youtube.com",
+
         };
 
 

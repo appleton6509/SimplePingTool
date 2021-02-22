@@ -20,13 +20,7 @@ namespace PingData.Utils
             }
             set
             {
-                if (ParseDirectoryPath(value))
-                    _path = value;
-                else
-                {
-                    throw new Exception("Directory is invalid or user does not have the correct permissions");
-                }
-
+                SetPath(value);
             }
         }
 
@@ -41,9 +35,7 @@ namespace PingData.Utils
             string parsedFilePath = path.Replace("/", @"\");
 
             if (parsedFilePath[parsedFilePath.Length-1] != '\\')
-            {
                 parsedFilePath += @"\";
-            }
 
             if (!Directory.Exists(parsedFilePath))
             {
@@ -62,9 +54,7 @@ namespace PingData.Utils
                 string fileName = DateTime.Today.ToShortDateString().Substring(0).Replace('/', '-') + ".log";
 
                 using (StreamWriter fs = File.AppendText(parsedFilePath + fileName))
-                {
                     fs.WriteLine("");
-                }
                 return true;
             }
             catch
@@ -93,6 +83,14 @@ namespace PingData.Utils
 
             using (StreamWriter fs = File.AppendText(path + fileName))
                 fs.WriteLine(pingResults.ToString());
+        }
+
+        private static void SetPath(string value)
+        {
+            if (ParseDirectoryPath(value))
+                _path = value;
+            else
+                throw new Exception("Directory is invalid or user does not have the correct permissions");
         }
     }
 }

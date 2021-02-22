@@ -8,6 +8,7 @@ namespace PingData.BusinessLogic
     public class Response : INotifyPropertyChanged
     {
         private int _latency;
+
         /// <summary>
         /// the latency in milliseconds for the ping to complete
         /// </summary>
@@ -15,17 +16,11 @@ namespace PingData.BusinessLogic
         {
             get
             {
-                if (this.Status == StatusMessage.SUCCESS)
-                    return _latency;
-                else
-                    return 0;
+                return GetLatency();
             }
             set
             {
-                if (value < 1 && value >= 0)
-                    _latency = 1;
-                else
-                    _latency = value;
+                SetLatency(value);
             }
         }
 
@@ -67,17 +62,12 @@ namespace PingData.BusinessLogic
 
         public void AddReplyException(Exception e)
         {
-            //Exception error exists
-
             this.Status = StatusMessage.ERROR;
             this.Latency = 0;
-
             if (e.InnerException != null)
             {
-               // this.AddressOrIp = e.Message;
                 this.ErrorMessage = e.InnerException.Message;
                 this.StatusCode = e.InnerException.GetHashCode();
-
             }
             else
             {
@@ -90,22 +80,42 @@ namespace PingData.BusinessLogic
         {
             this.StatusCode = reply.Status.GetHashCode();
 
+            if (reply.Status == IPStatus.Success) 
+                AddSuccessfulPing(reply);
+            else
+                AddFailedPing();
+        }
 
-            if (reply.Status == IPStatus.Success) //Successful ping
-            {
-                this.Status = StatusMessage.SUCCESS;
-                this.Latency = (int)reply.RoundtripTime;
-            }
-            else //failed ping
-            {
-                int errorLatency = 0;
-                bool errorIsKnown = PingStatus.Message.ContainsKey(this.StatusCode);
+        private void AddFailedPing()
+        {
+            int errorLatency = 0;
+            bool errorIsKnown = PingStatus.Message.ContainsKey(this.StatusCode);
 
-                this.Status = StatusMessage.ERROR;
-                this.Latency = errorLatency;
-                this.ErrorMessage = errorIsKnown ? PingStatus.Message[this.StatusCode] : PingStatus.Message[-1];
-            }
+            this.Status = StatusMessage.ERROR;
+            this.Latency = errorLatency;
+            this.ErrorMessage = errorIsKnown ? PingStatus.Message[this.StatusCode] : PingStatus.Message[-1];
+        }
 
+        private void AddSuccessfulPing(PingReply reply)
+        {
+            this.Status = StatusMessage.SUCCESS;
+            this.Latency = (int)reply.RoundtripTime;
+        }
+
+        private void SetLatency(int value)
+        {
+            if (value < 1 && value >= 0)
+                _latency = 1;
+            else
+                _latency = value;
+        }
+
+        private int GetLatency()
+        {
+            if (this.Status == StatusMessage.SUCCESS)
+                return _latency;
+            else
+                return 0;
         }
 
         public override string ToString()
@@ -113,13 +123,9 @@ namespace PingData.BusinessLogic
             string txtFileLine;
 
             if (this.StatusCode == 0) //Ping Successful
-            {
                 txtFileLine = $"{this.TimeStamp}\t Host: {this.AddressOrIp} Status: {this.Status} Latency: {this.Latency} ms";
-            }
             else //Ping Failed 
-            {
                 txtFileLine = $"{this.TimeStamp}\t Error: {this.AddressOrIp} Status: {this.Status} Error Code: {this.StatusCode} Error Message:{this.ErrorMessage}";
-            }
             return txtFileLine;
         }
 

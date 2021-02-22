@@ -67,10 +67,16 @@ namespace SimplePingTool.ViewModel
         public PingViewModel()
         {
             Settings.IsPingNotRunning = true;
+            Settings.AddressList = new ObservableCollection<string>()
+            {
+                "8.8.8.8",
+                "8.8.4.4",
+                "www.yahoo.com",
+                "www.youtube.com",
+            };
 
             StartPingCommand = new RelayCommand<object>(StartPing);
             StopPingCommand = new RelayCommand<object>(StopPing);
-
             PingResultsList.CollectionChanged += PingResultsList_CollectionChanged;
         }
 
@@ -82,15 +88,21 @@ namespace SimplePingTool.ViewModel
         /// <param name="obj"></param>
         private async void StartPing(object obj = null)
         {
-            if (Ping.IDataErrors.Count > 0)
+            if(IsErrorPresent())
             {
                 Settings.IsPingRunning = false;
                 return;
             }
-
-            ClearResults();
-            while (Settings.IsPingRunning && Ping.IDataErrors.Count == 0)
+            ClearPreviousPingResults();
+            while (Settings.IsPingRunning && !IsErrorPresent())
                 await StartPingTask();
+        }
+
+        private bool IsErrorPresent()
+        {
+            if (Ping.IDataErrors.Count > 0)
+                return true;
+            return false;
         }
 
         /// <summary>
@@ -112,11 +124,10 @@ namespace SimplePingTool.ViewModel
             PingResultsList.Add(pingResult);
         }
 
-
-        private void ClearResults()
+        private void ClearPreviousPingResults()
         {
             PingResultsList.Clear();
-            Stats.Clear();
+            Stats.SetDefaults();
             ChartData.Clear();
         }
 
@@ -130,14 +141,11 @@ namespace SimplePingTool.ViewModel
                 LogUtil.LogToTextFile(pingResult);
         }
 
-        /// <summary>
-        /// Updates all collections when a new ping result is received
-        /// </summary>
-        /// <param name="newPingResult"></param>
-        private void UpdatePingResultCollections(Response newPingResult)
+        private void PerformTasksOnPingResult(Response newPingResult)
         {
             Stats.Add(newPingResult);
             ChartData.Add(newPingResult);
+            LogToFile(newPingResult);
         }
         #endregion Private Methods
 
@@ -153,10 +161,10 @@ namespace SimplePingTool.ViewModel
             if (e.Action.Equals(NotifyCollectionChangedAction.Add))
             {
                 var newPingResult = ((ObservableCollection<Response>)sender)[e.NewStartingIndex];
-                UpdatePingResultCollections(newPingResult);
-                LogToFile(newPingResult);
+                PerformTasksOnPingResult(newPingResult);
             }
         }
+
 
         #endregion
 

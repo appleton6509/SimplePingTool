@@ -102,7 +102,6 @@ namespace PingData
             try
             {
                 reply = await sender.SendPingAsync(this.AddressOrIp);
-
                 result.AddReplyData(reply);
             }
             catch (Exception b)
@@ -151,9 +150,7 @@ namespace PingData
             {
                 case nameof(AddressOrIp):
                     if (!Validator.IsValidAddress(AddressOrIp))
-                    {
                         errorMessage = Validator.Errors["InvalidAddress"];
-                    }
                     break;
             }
 
