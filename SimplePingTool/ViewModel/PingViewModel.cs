@@ -102,7 +102,6 @@ namespace SimplePingTool.ViewModel
             Settings.IsPingRunning = false;
         }
 
-
         /// <summary>
         /// Start an async ping
         /// </summary>
@@ -112,6 +111,7 @@ namespace SimplePingTool.ViewModel
             Response pingResult = await Ping.StartPingAsync();
             PingResultsList.Add(pingResult);
         }
+
 
         private void ClearResults()
         {

@@ -54,14 +54,11 @@ namespace SimplePingTool
 
         #endregion
 
-
         public MainWindowModelView()
         {
             GoToPingView();
-
             ChangeToPingView = new RelayCommand<object>(GoToPingView);
             Close = new RelayCommand<object>((CloseCommand));
-
         }
 
         #region Private Methods

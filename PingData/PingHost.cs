@@ -66,9 +66,6 @@ namespace PingData
         /// </summary>
         public string AddressOrIp { get; set; }
 
-
-
-
         #region Constructor
         /// <summary>
         /// 
@@ -125,9 +122,7 @@ namespace PingData
 
         #endregion Public Methods
 
-
         #region IDataErrorInfo - Validation
-
         public string Error { get { return null; } }
 
         /// <summary>

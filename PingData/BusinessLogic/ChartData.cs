@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiveCharts;
-using LiveCharts.Wpf;
+﻿using LiveCharts;
 
 namespace PingData.BusinessLogic
 {
@@ -40,8 +34,7 @@ namespace PingData.BusinessLogic
         }
 
         public void Clear()
-        {
-            
+        {  
             Failures.Clear();
             Success.Clear();
         }

@@ -117,11 +117,9 @@ namespace PingData.BusinessLogic
 
             if (result.Status.Equals(Response.StatusMessage.SUCCESS))
             {
-                //On successful packet send, determine if max latency increased
                 if (result.Latency > _maxLatency)
                     MaxLatency = result.Latency;
 
-                //Latency is less then 1, set to zero
                 if (result.Latency < 1)
                     result.Latency = 1;
 
